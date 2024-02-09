@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\OrganizingEventsService.Application.Models\OrganizingEventsService.Application.Models.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SourceKit.Generators.Builder"/>
+    </ItemGroup>
+    <!-- добавил из лабы -->
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" /><PackageReference Include="Itmo.Dev.Platform.Postgres" />
+        <PackageReference Include="Itmo.Dev.Platform.Common" />
+    </ItemGroup>
+</Project>
