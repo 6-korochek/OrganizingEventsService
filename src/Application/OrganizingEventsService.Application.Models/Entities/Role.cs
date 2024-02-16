@@ -2,7 +2,7 @@
 
 public partial class Role
 {
-    public Guid Id { get; set; }
+    public Guid Pk { get; set; }
 
     public string Name { get; set; } = null!;
 

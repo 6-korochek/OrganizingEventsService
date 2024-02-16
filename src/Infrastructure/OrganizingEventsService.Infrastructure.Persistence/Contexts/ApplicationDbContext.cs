@@ -33,13 +33,13 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("account_pkey");
+            entity.HasKey(e => e.Pk).HasName("account_pkey");
 
             entity.ToTable("account");
 
             entity.HasIndex(e => e.Email, "account_email_key").IsUnique();
 
-            entity.Property(e => e.Id)
+            entity.Property(e => e.Pk)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.CreatedAt)
@@ -65,13 +65,13 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Event>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("event_pkey");
+            entity.HasKey(e => e.Pk).HasName("event_pkey");
 
             entity.ToTable("event");
 
             entity.HasIndex(e => e.InviteCode, "event_invite_code_key").IsUnique();
 
-            entity.Property(e => e.Id)
+            entity.Property(e => e.Pk)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -101,11 +101,11 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<EventParticipant>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("event_participant_pkey");
+            entity.HasKey(e => e.Pk).HasName("event_participant_pkey");
 
             entity.ToTable("event_participant");
 
-            entity.Property(e => e.Id)
+            entity.Property(e => e.Pk)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.AccountPk).HasColumnName("account_pk");
@@ -135,11 +135,11 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Feedback>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("feedback_pkey");
+            entity.HasKey(e => e.Pk).HasName("feedback_pkey");
 
             entity.ToTable("feedback");
 
-            entity.Property(e => e.Id)
+            entity.Property(e => e.Pk)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.EventParticipantPk).HasColumnName("event_participant_pk");
@@ -155,13 +155,13 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Permission>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("permission_pkey");
+            entity.HasKey(e => e.Pk).HasName("permission_pkey");
 
             entity.ToTable("permission");
 
             entity.HasIndex(e => e.Name, "permission_name_key").IsUnique();
 
-            entity.Property(e => e.Id)
+            entity.Property(e => e.Pk)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -172,13 +172,13 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("role_pkey");
+            entity.HasKey(e => e.Pk).HasName("role_pkey");
 
             entity.ToTable("role");
 
             entity.HasIndex(e => e.Name, "role_name_key").IsUnique();
 
-            entity.Property(e => e.Id)
+            entity.Property(e => e.Pk)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Name)
@@ -188,11 +188,11 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<RolePermission>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("role_permission_pkey");
+            entity.HasKey(e => e.Pk).HasName("role_permission_pkey");
 
             entity.ToTable("role_permission");
 
-            entity.Property(e => e.Id)
+            entity.Property(e => e.Pk)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.PermissionPk).HasColumnName("permission_pk");

@@ -2,7 +2,7 @@
 
 public partial class Account
 {
-    public Guid Id { get; set; }
+    public Guid Pk { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -12,7 +12,7 @@ public partial class Account
 
     public string PasswordHash { get; set; } = null!;
 
-    public bool? IsInvite { get; set; }
+    public bool IsInvite { get; set; } = true;
 
     public DateTime CreatedAt { get; set; }
 

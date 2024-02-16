@@ -6,7 +6,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Entities;
 
 public partial class Event
 {
-    public Guid Id { get; set; }
+    public Guid Pk { get; set; }
 
     public string Name { get; set; } = null!;
 
