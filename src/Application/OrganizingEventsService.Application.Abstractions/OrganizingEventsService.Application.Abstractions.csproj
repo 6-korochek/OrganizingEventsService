@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
+        <ProjectReference Include="..\OrganizingEventsService.Application.Contracts\OrganizingEventsService.Application.Contracts.csproj" />
         <ProjectReference Include="..\OrganizingEventsService.Application.Models\OrganizingEventsService.Application.Models.csproj"/>
     </ItemGroup>
 

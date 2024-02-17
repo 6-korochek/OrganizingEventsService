@@ -4,7 +4,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Entities;
 
 public partial class EventParticipant
 {
-    public Guid Id { get; set; }
+    public Guid Pk { get; set; }
 
     public Guid EventPk { get; set; }
 

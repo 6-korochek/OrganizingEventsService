@@ -2,7 +2,7 @@
 
 public partial class Feedback
 {
-    public Guid Id { get; set; }
+    public Guid Pk { get; set; }
 
     public Guid EventParticipantPk { get; set; }
 

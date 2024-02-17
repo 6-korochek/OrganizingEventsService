@@ -2,9 +2,14 @@
 
     <ItemGroup>
         <ProjectReference Include="..\OrganizingEventsService.Application.Models\OrganizingEventsService.Application.Models.csproj"/>
+
+
+
     </ItemGroup>
 
-    <ItemGroup>
-    </ItemGroup>
+
+
+
+
 
 </Project>
