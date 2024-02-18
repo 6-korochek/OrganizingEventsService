@@ -2,7 +2,7 @@ namespace OrganizingEventsService.Application.Contracts.Feedback;
 
 public class FeedbackDto
 {
-    public Guid Pk { get; set; }
+    public Guid Id { get; set; }
     
     public uint Rating { get; set; }
     

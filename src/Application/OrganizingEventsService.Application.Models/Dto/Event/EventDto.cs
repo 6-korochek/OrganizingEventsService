@@ -4,7 +4,7 @@ namespace OrganizingEventsService.Application.Contracts.Event;
 
 public class EventDto
 {
-    public Guid Pk { get; set; }
+    public Guid Id { get; set; }
 
     public string Name { get; set; } = null!;
 

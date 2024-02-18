@@ -1,26 +1,26 @@
 ﻿using OrganizingEventsService.Application.Models.Entities.Enums;
 
-namespace OrganizingEventsService.Infrastructure.Persistence.Entities;
+namespace OrganizingEventsService.Application.Models.Entities;
 
 public partial class EventParticipant
 {
-    public Guid Pk { get; set; }
+    public Guid Id { get; set; }
 
-    public Guid EventPk { get; set; }
+    public Guid EventId { get; set; }
 
-    public Guid AccountPk { get; set; }
+    public Guid AccountId { get; set; }
 
     public EventParticipantInviteStatus InviteStatus { get; set; }
 
     public bool? IsBanned { get; set; }
 
-    public Guid RolePk { get; set; }
+    public Guid RoleId { get; set; }
 
-    public virtual Account AccountPkNavigation { get; set; } = null!;
+    public virtual Account AccountIdNavigation { get; set; } = null!;
 
-    public virtual Event EventPkNavigation { get; set; } = null!;
+    public virtual Event EventIdNavigation { get; set; } = null!;
 
     public virtual ICollection<Feedback> Feedbacks { get;  } = new List<Feedback>();
 
-    public virtual Role RolePkNavigation { get; set; } = null!;
+    public virtual Role RoleIdNavigation { get; set; } = null!;
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OrganizingEventsService.Application.Models.Entities;
 using OrganizingEventsService.Application.Models.Entities.Enums;
-using OrganizingEventsService.Infrastructure.Persistence.Entities;
 
 namespace OrganizingEventsService.Infrastructure.Persistence.Contexts;
 
@@ -33,13 +33,13 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.Pk).HasName("account_pkey");
+            entity.HasKey(e => e.Id).HasName("account_pkey");
 
             entity.ToTable("account");
 
             entity.HasIndex(e => e.Email, "account_email_key").IsUnique();
 
-            entity.Property(e => e.Pk)
+            entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.CreatedAt)
@@ -65,13 +65,13 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Event>(entity =>
         {
-            entity.HasKey(e => e.Pk).HasName("event_pkey");
+            entity.HasKey(e => e.Id).HasName("event_pkey");
 
             entity.ToTable("event");
 
             entity.HasIndex(e => e.InviteCode, "event_invite_code_key").IsUnique();
 
-            entity.Property(e => e.Pk)
+            entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -101,67 +101,67 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<EventParticipant>(entity =>
         {
-            entity.HasKey(e => e.Pk).HasName("event_participant_pkey");
+            entity.HasKey(e => e.Id).HasName("event_participant_pkey");
 
             entity.ToTable("event_participant");
 
-            entity.Property(e => e.Pk)
+            entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.AccountPk).HasColumnName("account_pk");
-            entity.Property(e => e.EventPk).HasColumnName("event_pk");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.EventId).HasColumnName("event_id");
             entity.Property(e => e.IsBanned)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_banned");
-            entity.Property(e => e.RolePk).HasColumnName("role_pk");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
 
             entity.Property(e => e.InviteStatus)
                 .HasColumnName("invite_status")
                 .HasConversion<string>();
 
-            entity.HasOne(d => d.AccountPkNavigation).WithMany(p => p.EventParticipants)
-                .HasForeignKey(d => d.AccountPk)
+            entity.HasOne(d => d.AccountIdNavigation).WithMany(p => p.EventParticipants)
+                .HasForeignKey(d => d.AccountId)
                 .HasConstraintName("event_participant_account_pk_fkey");
 
-            entity.HasOne(d => d.EventPkNavigation).WithMany(p => p.EventParticipants)
-                .HasForeignKey(d => d.EventPk)
+            entity.HasOne(d => d.EventIdNavigation).WithMany(p => p.EventParticipants)
+                .HasForeignKey(d => d.EventId)
                 .HasConstraintName("event_participant_event_pk_fkey");
 
-            entity.HasOne(d => d.RolePkNavigation).WithMany(p => p.EventParticipants)
-                .HasForeignKey(d => d.RolePk)
+            entity.HasOne(d => d.RoleIdNavigation).WithMany(p => p.EventParticipants)
+                .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("event_participant_role_pk_fkey");
         });
 
         modelBuilder.Entity<Feedback>(entity =>
         {
-            entity.HasKey(e => e.Pk).HasName("feedback_pkey");
+            entity.HasKey(e => e.Id).HasName("feedback_pkey");
 
             entity.ToTable("feedback");
 
-            entity.Property(e => e.Pk)
+            entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.EventParticipantPk).HasColumnName("event_participant_pk");
+            entity.Property(e => e.EventParticipantId).HasColumnName("event_participant_id");
             entity.Property(e => e.Rating)
                 .HasPrecision(1)
                 .HasColumnName("rating");
             entity.Property(e => e.Text).HasColumnName("text");
 
-            entity.HasOne(d => d.EventParticipantPkNavigation).WithMany(p => p.Feedbacks)
-                .HasForeignKey(d => d.EventParticipantPk)
+            entity.HasOne(d => d.EventParticipantIdNavigation).WithMany(p => p.Feedbacks)
+                .HasForeignKey(d => d.EventParticipantId)
                 .HasConstraintName("feedback_event_participant_pk_fkey");
         });
 
         modelBuilder.Entity<Permission>(entity =>
         {
-            entity.HasKey(e => e.Pk).HasName("permission_pkey");
+            entity.HasKey(e => e.Id).HasName("permission_pkey");
 
             entity.ToTable("permission");
 
             entity.HasIndex(e => e.Name, "permission_name_key").IsUnique();
 
-            entity.Property(e => e.Pk)
+            entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -172,13 +172,13 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Pk).HasName("role_pkey");
+            entity.HasKey(e => e.Id).HasName("role_pkey");
 
             entity.ToTable("role");
 
             entity.HasIndex(e => e.Name, "role_name_key").IsUnique();
 
-            entity.Property(e => e.Pk)
+            entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Name)
@@ -188,22 +188,22 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<RolePermission>(entity =>
         {
-            entity.HasKey(e => e.Pk).HasName("role_permission_pkey");
+            entity.HasKey(e => e.Id).HasName("role_permission_pkey");
 
             entity.ToTable("role_permission");
 
-            entity.Property(e => e.Pk)
+            entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.PermissionPk).HasColumnName("permission_pk");
-            entity.Property(e => e.RolePk).HasColumnName("role_pk");
+            entity.Property(e => e.PermissionId).HasColumnName("permission_id");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
 
-            entity.HasOne(d => d.PermissionPkNavigation).WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.PermissionPk)
+            entity.HasOne(d => d.PermissionIdNavigation).WithMany(p => p.RolePermissions)
+                .HasForeignKey(d => d.PermissionId)
                 .HasConstraintName("role_permission_permission_pk_fkey");
 
-            entity.HasOne(d => d.RolePkNavigation).WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.RolePk)
+            entity.HasOne(d => d.RoleIdNavigation).WithMany(p => p.RolePermissions)
+                .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("role_permission_role_pk_fkey");
         });
 

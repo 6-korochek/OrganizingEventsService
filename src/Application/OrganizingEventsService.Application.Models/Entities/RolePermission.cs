@@ -1,14 +1,14 @@
-﻿namespace OrganizingEventsService.Infrastructure.Persistence.Entities;
+﻿namespace OrganizingEventsService.Application.Models.Entities;
 
 public partial class RolePermission
 {
-    public Guid Pk { get; set; }
+    public Guid Id { get; set; }
 
-    public Guid RolePk { get; set; }
+    public Guid RoleId { get; set; }
 
-    public Guid PermissionPk { get; set; }
+    public Guid PermissionId { get; set; }
 
-    public virtual Permission PermissionPkNavigation { get; set; } = null!;
+    public virtual Permission PermissionIdNavigation { get; set; } = null!;
 
-    public virtual Role RolePkNavigation { get; set; } = null!;
+    public virtual Role RoleIdNavigation { get; set; } = null!;
 }

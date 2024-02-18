@@ -8,5 +8,5 @@ public class UpdateParticipantDto
 
     public bool? IsBanned { get; set; }
 
-    public Guid RolePk { get; set; }
+    public Guid RoleId { get; set; }
 }

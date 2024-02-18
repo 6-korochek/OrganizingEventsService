@@ -4,5 +4,5 @@ public class CreateParticipantDto
 {
     public string? AccountEmail { get; set; }
 
-    private Guid RolePk { get; set; }
+    private Guid RoleId { get; set; }
 }

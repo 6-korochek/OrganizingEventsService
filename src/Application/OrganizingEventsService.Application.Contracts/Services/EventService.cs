@@ -4,7 +4,7 @@ using OrganizingEventsService.Application.Contracts.Feedback;
 using OrganizingEventsService.Application.Contracts.Participant;
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
-namespace OrganizingEventsService.Application.Abstractions.Services;
+namespace OrganizingEventsService.Application.Contracts.Services;
 
 public abstract class EventService
 {
@@ -15,45 +15,45 @@ public abstract class EventService
         AccountService = accountService;
     }
 
-    public abstract EventDto GetEventInfo(Guid? eventPk, string? inviteCode);
+    public abstract EventDto GetEventInfo(Guid? eventId, string? inviteCode);
     
     public abstract IEnumerable<EventDto> GetEventsWhereAccountIsParticipant(
-        Guid accountPk,
+        Guid accountId,
         EventParticipantInviteStatus eventParticipant,
         PaginationDto paginationDto);
     
-    public abstract NewEventDto CreateEvent(Guid organizerPk, CreateEventDto createEventDto);
+    public abstract NewEventDto CreateEvent(Guid organizerId, CreateEventDto createEventDto);
 
-    public abstract Guid PartiallyUpdateEvent(Guid eventPk, UpdateEventDto updateEventDto);
+    public abstract Guid PartiallyUpdateEvent(Guid eventId, UpdateEventDto updateEventDto);
 
-    public abstract void DeleteEventByPk(Guid eventPk);
+    public abstract void DeleteEventById(Guid eventId);
 
     public abstract void UpdateParticipantStatus(
-        Guid currentAccountPk,
+        Guid currentAccountId,
         UpdateParticipantStatusDto updateInvitationStatusDto);
 
-    public abstract IEnumerable<ParticipantDto> GetParticipants(Guid eventPk);
+    public abstract IEnumerable<ParticipantDto> GetParticipants(Guid eventId);
 
-    public abstract ParticipantDto GetParticipantByPk(Guid participantPk);
+    public abstract ParticipantDto GetParticipantById(Guid participantId);
 
     public abstract void CreateParticipants(IEnumerable<CreateParticipantDto> createParticipantDtos);
 
     public abstract ParticipantDto PartiallyUpdateParticipant(
-        Guid participantPk,
+        Guid participantId,
         UpdateParticipantDto updateParticipantDto);
 
     public abstract void DeleteParticipantsByEmails(IEnumerable<string> accountEmails);
     
-    public abstract void DeleteParticipantByAccountPk(Guid currentAccountPk);
+    public abstract void DeleteParticipantByAccountId(Guid currentAccountId);
     
-    public abstract IEnumerable<FeedbackDto> GetFeedbacksByEventPk(Guid eventPk, Guid currentAccountPk);
+    public abstract IEnumerable<FeedbackDto> GetFeedbacksByEventId(Guid eventId, Guid currentAccountId);
     
-    public abstract Guid CreateFeedback(Guid eventPk, Guid currentAccountPk, CreateFeedbackDto createFeedbackDto);
+    public abstract Guid CreateFeedback(Guid eventId, Guid currentAccountId, CreateFeedbackDto createFeedbackDto);
 
     public abstract FeedbackDto PartiallyUpdateFeedback(
-        Guid feedbackPk,
-        Guid currentAccountPk,
+        Guid feedbackId,
+        Guid currentAccountId,
         UpdateFeedbackDto updateFeedbackDto);
     
-    public abstract void DeleteFeedbackByPk(Guid feedbackPk, Guid currentAccountPk);
+    public abstract void DeleteFeedbackById(Guid feedbackId, Guid currentAccountId);
 }

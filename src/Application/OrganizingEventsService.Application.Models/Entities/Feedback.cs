@@ -1,14 +1,14 @@
-﻿namespace OrganizingEventsService.Infrastructure.Persistence.Entities;
+﻿namespace OrganizingEventsService.Application.Models.Entities;
 
 public partial class Feedback
 {
-    public Guid Pk { get; set; }
+    public Guid Id { get; set; }
 
-    public Guid EventParticipantPk { get; set; }
+    public Guid EventParticipantId { get; set; }
 
     public decimal Rating { get; set; }
 
     public string? Text { get; set; }
 
-    public virtual EventParticipant EventParticipantPkNavigation { get; set; } = null!;
+    public virtual EventParticipant EventParticipantIdNavigation { get; set; } = null!;
 }

@@ -1,8 +1,8 @@
-﻿namespace OrganizingEventsService.Infrastructure.Persistence.Entities;
+﻿namespace OrganizingEventsService.Application.Models.Entities;
 
 public partial class Account
 {
-    public Guid Pk { get; set; }
+    public Guid Id { get; set; }
 
     public string Name { get; set; } = null!;
 

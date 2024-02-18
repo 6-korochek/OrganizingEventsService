@@ -2,7 +2,7 @@ namespace OrganizingEventsService.Application.Contracts.Account;
 
 public class AccountDto
 {
-    public Guid Pk { get; set; }
+    public Guid Id { get; set; }
 
     public string? Name { get; set; }
 

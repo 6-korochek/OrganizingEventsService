@@ -136,11 +136,11 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("AccountPk")
+                    b.Property<Guid>("AccountId")
                         .HasColumnType("uuid")
                         .HasColumnName("account_pk");
 
-                    b.Property<Guid>("EventPk")
+                    b.Property<Guid>("EventId")
                         .HasColumnType("uuid")
                         .HasColumnName("event_pk");
 
@@ -155,18 +155,18 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                         .HasColumnName("is_banned")
                         .HasDefaultValueSql("false");
 
-                    b.Property<Guid>("RolePk")
+                    b.Property<Guid>("RoleId")
                         .HasColumnType("uuid")
                         .HasColumnName("role_pk");
 
                     b.HasKey("Id")
                         .HasName("event_participant_pkey");
 
-                    b.HasIndex("AccountPk");
+                    b.HasIndex("AccountId");
 
-                    b.HasIndex("EventPk");
+                    b.HasIndex("EventId");
 
-                    b.HasIndex("RolePk");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("event_participant", (string)null);
                 });
@@ -177,7 +177,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("EventParticipantPk")
+                    b.Property<Guid>("EventParticipantId")
                         .HasColumnType("uuid")
                         .HasColumnName("event_participant_pk");
 
@@ -193,7 +193,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("feedback_pkey");
 
-                    b.HasIndex("EventParticipantPk");
+                    b.HasIndex("EventParticipantId");
 
                     b.ToTable("feedback", (string)null);
                 });
@@ -250,85 +250,85 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("PermissionPk")
+                    b.Property<Guid>("PermissionId")
                         .HasColumnType("uuid")
                         .HasColumnName("permission_pk");
 
-                    b.Property<Guid>("RolePk")
+                    b.Property<Guid>("RoleId")
                         .HasColumnType("uuid")
                         .HasColumnName("role_pk");
 
                     b.HasKey("Id")
                         .HasName("role_permission_pkey");
 
-                    b.HasIndex("PermissionPk");
+                    b.HasIndex("PermissionId");
 
-                    b.HasIndex("RolePk");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("role_permission", (string)null);
                 });
 
             modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Entities.EventParticipant", b =>
                 {
-                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.Account", "AccountPkNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.Account", "AccountIdNavigation")
                         .WithMany("EventParticipants")
-                        .HasForeignKey("AccountPk")
+                        .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("event_participant_account_pk_fkey");
 
-                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.Event", "EventPkNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.Event", "EventIdNavigation")
                         .WithMany("EventParticipants")
-                        .HasForeignKey("EventPk")
+                        .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("event_participant_event_pk_fkey");
 
-                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.Role", "RolePkNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.Role", "RoleIdNavigation")
                         .WithMany("EventParticipants")
-                        .HasForeignKey("RolePk")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("event_participant_role_pk_fkey");
 
-                    b.Navigation("AccountPkNavigation");
+                    b.Navigation("AccountIdNavigation");
 
-                    b.Navigation("EventPkNavigation");
+                    b.Navigation("EventIdNavigation");
 
-                    b.Navigation("RolePkNavigation");
+                    b.Navigation("RoleIdNavigation");
                 });
 
             modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Entities.Feedback", b =>
                 {
-                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.EventParticipant", "EventParticipantPkNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.EventParticipant", "EventParticipantIdNavigation")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("EventParticipantPk")
+                        .HasForeignKey("EventParticipantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("feedback_event_participant_pk_fkey");
 
-                    b.Navigation("EventParticipantPkNavigation");
+                    b.Navigation("EventParticipantIdNavigation");
                 });
 
             modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Entities.RolePermission", b =>
                 {
-                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.Permission", "PermissionPkNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.Permission", "PermissionIdNavigation")
                         .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionPk")
+                        .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("role_permission_permission_pk_fkey");
 
-                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.Role", "RolePkNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Entities.Role", "RoleIdNavigation")
                         .WithMany("RolePermissions")
-                        .HasForeignKey("RolePk")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("role_permission_role_pk_fkey");
 
-                    b.Navigation("PermissionPkNavigation");
+                    b.Navigation("PermissionIdNavigation");
 
-                    b.Navigation("RolePkNavigation");
+                    b.Navigation("RoleIdNavigation");
                 });
 
             modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Entities.Account", b =>

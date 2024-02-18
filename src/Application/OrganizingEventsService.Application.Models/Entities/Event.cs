@@ -2,11 +2,11 @@
 
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
-namespace OrganizingEventsService.Infrastructure.Persistence.Entities;
+namespace OrganizingEventsService.Application.Models.Entities;
 
 public partial class Event
 {
-    public Guid Pk { get; set; }
+    public Guid Id { get; set; }
 
     public string Name { get; set; } = null!;
 

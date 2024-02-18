@@ -1,6 +1,6 @@
 using OrganizingEventsService.Application.Contracts.Account;
 
-namespace OrganizingEventsService.Application.Abstractions.Services;
+namespace OrganizingEventsService.Application.Contracts.Services;
 
 public abstract class AuthService
 {
@@ -11,7 +11,7 @@ public abstract class AuthService
         AccountService = accountService;
     }
 
-    public abstract AuthenticatedAccountDto AuthenticateAccountByToken(string token);
+    public abstract AuthenticatedAccountDto AuthenticateAccount(string token);
 
     public abstract AuthenticatedAccountDto Register(RegisterAccountDto registerAccountDto);
     

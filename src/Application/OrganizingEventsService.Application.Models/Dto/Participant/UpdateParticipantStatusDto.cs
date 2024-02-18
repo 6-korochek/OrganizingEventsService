@@ -4,7 +4,7 @@ namespace OrganizingEventsService.Application.Contracts.Participant;
 
 public class UpdateParticipantStatusDto
 {
-    public Guid? EventPk { get; set; }
+    public Guid? EventId { get; set; }
     
     public EventParticipantInviteStatus Status { get; set; }
 }

@@ -5,7 +5,7 @@ namespace OrganizingEventsService.Application.Contracts.Participant;
 
 public class ParticipantDto
 {
-    public Guid AccountPk { get; set; }
+    public Guid AccountId { get; set; }
     
     public string? AccountName { get; set; }
 
