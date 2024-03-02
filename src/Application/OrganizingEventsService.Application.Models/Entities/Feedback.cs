@@ -1,4 +1,6 @@
-﻿namespace OrganizingEventsService.Application.Models.Entities;
+﻿#pragma warning disable CA1724
+
+namespace OrganizingEventsService.Application.Models.Entities;
 
 public partial class Feedback
 {

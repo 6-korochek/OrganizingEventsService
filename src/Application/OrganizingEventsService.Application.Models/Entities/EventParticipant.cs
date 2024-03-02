@@ -14,6 +14,8 @@ public partial class EventParticipant
 
     public bool? IsBanned { get; set; }
 
+    public bool? IsArchive { get; set; }
+
     public Guid RoleId { get; set; }
 
     public virtual Account AccountIdNavigation { get; set; } = null!;

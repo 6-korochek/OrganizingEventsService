@@ -1,4 +1,6 @@
-﻿namespace OrganizingEventsService.Application.Models.Entities;
+﻿#pragma warning disable CA1724
+
+namespace OrganizingEventsService.Application.Models.Entities;
 
 public partial class Account
 {
@@ -14,7 +16,11 @@ public partial class Account
 
     public bool IsInvite { get; set; } = true;
 
+    public bool? IsAdmin { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
-    public virtual ICollection<EventParticipant> EventParticipants { get;  } = new List<EventParticipant>();
+    public DateTime PasswordHashUpdatedAt { get; set; }
+
+    public virtual ICollection<EventParticipant> EventParticipants { get; } = new List<EventParticipant>();
 }

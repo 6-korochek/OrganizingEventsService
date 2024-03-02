@@ -1,4 +1,5 @@
 ﻿#pragma warning disable CA1716
+#pragma warning disable CA1724
 
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
@@ -24,5 +25,5 @@ public partial class Event
 
     public string? InviteCode { get; set; }
 
-    public virtual ICollection<EventParticipant> EventParticipants { get;  } = new List<EventParticipant>();
+    public virtual ICollection<EventParticipant> EventParticipants { get; } = new List<EventParticipant>();
 }
