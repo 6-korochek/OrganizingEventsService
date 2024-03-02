@@ -1,4 +1,4 @@
-using OrganizingEventsService.Application.Contracts.Account;
+using OrganizingEventsService.Application.Models.Dto.Account;
 
 namespace OrganizingEventsService.Application.Contracts.Services;
 
@@ -14,7 +14,7 @@ public abstract class AuthService
     public abstract AuthenticatedAccountDto AuthenticateAccount(string token);
 
     public abstract AuthenticatedAccountDto Register(RegisterAccountDto registerAccountDto);
-    
+
     public abstract AuthenticatedAccountDto Login(LoginAccountDto loginAccountDto);
 
     public abstract void Logout(string token);

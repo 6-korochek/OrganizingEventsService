@@ -1,6 +1,6 @@
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
-namespace OrganizingEventsService.Application.Contracts.Event;
+namespace OrganizingEventsService.Application.Models.Dto.Event;
 
 public class EventDto
 {

@@ -1,4 +1,4 @@
-namespace OrganizingEventsService.Application.Contracts.Account;
+namespace OrganizingEventsService.Application.Models.Dto.Account;
 
 public class AuthenticatedAccountDto
 {

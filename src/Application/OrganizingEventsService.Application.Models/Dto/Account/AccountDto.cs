@@ -1,4 +1,4 @@
-namespace OrganizingEventsService.Application.Contracts.Account;
+namespace OrganizingEventsService.Application.Models.Dto.Account;
 
 public class AccountDto
 {
@@ -8,7 +8,7 @@ public class AccountDto
 
     public string? Surname { get; set; }
 
-    public string? Email { get; set; } 
-    
+    public string? Email { get; set; }
+
     public bool IsInvite { get; set; }
 }

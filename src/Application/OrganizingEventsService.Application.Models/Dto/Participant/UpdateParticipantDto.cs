@@ -1,6 +1,6 @@
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
-namespace OrganizingEventsService.Application.Contracts.Participant;
+namespace OrganizingEventsService.Application.Models.Dto.Participant;
 
 public class UpdateParticipantDto
 {
