@@ -14,6 +14,6 @@ public interface IEventRepository : IBaseRepository<Event>
     EventParticipant GetEventByInviteCode(string inviteCode);
 
     void UpdateParticipant(EventParticipant eventParticipant);
-    
+
     void DeleteParticipant(EventParticipant eventParticipant);
 }

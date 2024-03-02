@@ -3,7 +3,7 @@ namespace OrganizingEventsService.Application.Abstractions.Persistence.Repositor
 public interface IBaseRepository<TEntity>
 {
     public abstract TEntity GetById(Guid id);
-    
+
     public abstract void Add(TEntity entity);
 
     public abstract void Update(TEntity entity);

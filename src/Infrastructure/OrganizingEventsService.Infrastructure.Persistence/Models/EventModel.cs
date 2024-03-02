@@ -18,7 +18,7 @@ public partial class EventModel
 
     public DateTime? EndDatetime { get; set; }
 
-    public EventParticipantInviteStatus Status { get; set; }
+    public EventStatus Status { get; set; }
 
     public string? InviteCode { get; set; }
 

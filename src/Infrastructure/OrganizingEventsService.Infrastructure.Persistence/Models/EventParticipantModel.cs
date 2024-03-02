@@ -13,7 +13,7 @@ public partial class EventParticipantModel
     public EventParticipantInviteStatus InviteStatus { get; set; }
 
     public bool? IsBanned { get; set; }
-    
+
     public bool? IsArchive { get; set; }
 
     public Guid RoleId { get; set; }
@@ -22,7 +22,7 @@ public partial class EventParticipantModel
 
     public virtual EventModel EventIdNavigation { get; set; } = null!;
 
-    public virtual ICollection<FeedbackModel> Feedbacks { get;  } = new List<FeedbackModel>();
+    public virtual ICollection<FeedbackModel> Feedbacks { get; } = new List<FeedbackModel>();
 
     public virtual RoleModel RoleIdNavigation { get; set; } = null!;
 }

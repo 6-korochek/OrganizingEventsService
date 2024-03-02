@@ -24,7 +24,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "event_status", new[] { "in_draft", "planed", "is_over", "in_going" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.Account", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.AccountModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -85,7 +85,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.ToTable("account", (string)null);
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.Event", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.EventModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -140,7 +140,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.ToTable("event", (string)null);
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.EventParticipant", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.EventParticipantModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -187,7 +187,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.ToTable("event_participant", (string)null);
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.Feedback", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.FeedbackModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -214,7 +214,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.ToTable("feedback", (string)null);
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.Permission", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.PermissionModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -239,7 +239,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.ToTable("permission", (string)null);
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.Role", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.RoleModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -260,7 +260,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.ToTable("role", (string)null);
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.RolePermission", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.RolePermissionModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -284,23 +284,23 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.ToTable("role_permission", (string)null);
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.EventParticipant", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.EventParticipantModel", b =>
                 {
-                    b.HasOne("OrganizingEventsService.Application.Models.Entities.Account", "AccountIdNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Models.AccountModel", "AccountIdNavigation")
                         .WithMany("EventParticipants")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("event_participant_account_pk_fkey");
 
-                    b.HasOne("OrganizingEventsService.Application.Models.Entities.Event", "EventIdNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Models.EventModel", "EventIdNavigation")
                         .WithMany("EventParticipants")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("event_participant_event_pk_fkey");
 
-                    b.HasOne("OrganizingEventsService.Application.Models.Entities.Role", "RoleIdNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Models.RoleModel", "RoleIdNavigation")
                         .WithMany("EventParticipants")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -314,9 +314,9 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.Navigation("RoleIdNavigation");
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.Feedback", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.FeedbackModel", b =>
                 {
-                    b.HasOne("OrganizingEventsService.Application.Models.Entities.EventParticipant", "EventParticipantIdNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Models.EventParticipantModel", "EventParticipantIdNavigation")
                         .WithMany("Feedbacks")
                         .HasForeignKey("EventParticipantId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -326,16 +326,16 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.Navigation("EventParticipantIdNavigation");
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.RolePermission", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.RolePermissionModel", b =>
                 {
-                    b.HasOne("OrganizingEventsService.Application.Models.Entities.Permission", "PermissionIdNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Models.PermissionModel", "PermissionIdNavigation")
                         .WithMany("RolePermissions")
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("role_permission_permission_pk_fkey");
 
-                    b.HasOne("OrganizingEventsService.Application.Models.Entities.Role", "RoleIdNavigation")
+                    b.HasOne("OrganizingEventsService.Infrastructure.Persistence.Models.RoleModel", "RoleIdNavigation")
                         .WithMany("RolePermissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -347,27 +347,27 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Migrations
                     b.Navigation("RoleIdNavigation");
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.Account", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.AccountModel", b =>
                 {
                     b.Navigation("EventParticipants");
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.Event", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.EventModel", b =>
                 {
                     b.Navigation("EventParticipants");
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.EventParticipant", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.EventParticipantModel", b =>
                 {
                     b.Navigation("Feedbacks");
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.Permission", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.PermissionModel", b =>
                 {
                     b.Navigation("RolePermissions");
                 });
 
-            modelBuilder.Entity("OrganizingEventsService.Application.Models.Entities.Role", b =>
+            modelBuilder.Entity("OrganizingEventsService.Infrastructure.Persistence.Models.RoleModel", b =>
                 {
                     b.Navigation("EventParticipants");
 
