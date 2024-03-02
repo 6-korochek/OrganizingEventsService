@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrganizingEventsService.Application.Models.Entities;
 using OrganizingEventsService.Application.Models.Entities.Enums;
+using OrganizingEventsService.Infrastructure.Persistence.Models;
+using EventParticipantInviteStatus = OrganizingEventsService.Infrastructure.Persistence.Models.Enums.EventParticipantInviteStatus;
 
 namespace OrganizingEventsService.Infrastructure.Persistence.Contexts;
 
@@ -11,19 +13,19 @@ public partial class ApplicationDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Account> Accounts { get; set; }
+    public virtual DbSet<AccountModel> Accounts { get; set; }
 
-    public virtual DbSet<Event> Events { get; set; }
+    public virtual DbSet<EventModel> Events { get; set; }
 
-    public virtual DbSet<EventParticipant> EventParticipants { get; set; }
+    public virtual DbSet<EventParticipantModel> EventParticipants { get; set; }
 
-    public virtual DbSet<Feedback> Feedbacks { get; set; }
+    public virtual DbSet<FeedbackModel> Feedbacks { get; set; }
 
-    public virtual DbSet<Permission> Permissions { get; set; }
+    public virtual DbSet<PermissionModel> Permissions { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
+    public virtual DbSet<RoleModel> Roles { get; set; }
 
-    public virtual DbSet<RolePermission> RolePermissions { get; set; }
+    public virtual DbSet<RolePermissionModel> RolePermissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

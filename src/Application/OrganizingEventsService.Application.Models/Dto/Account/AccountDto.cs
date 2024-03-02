@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace OrganizingEventsService.Application.Contracts.Account;
 
 public class AccountDto
 {
+    [Required(ErrorMessage = "")]
     public Guid Id { get; set; }
 
     public string? Name { get; set; }
