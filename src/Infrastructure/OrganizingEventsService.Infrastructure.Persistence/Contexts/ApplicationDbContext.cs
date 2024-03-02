@@ -1,31 +1,31 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OrganizingEventsService.Application.Models.Entities;
-using OrganizingEventsService.Application.Models.Entities.Enums;
+﻿#pragma warning disable SA1206
+
+using Microsoft.EntityFrameworkCore;
 using OrganizingEventsService.Infrastructure.Persistence.Models;
-using EventParticipantInviteStatus = OrganizingEventsService.Infrastructure.Persistence.Models.Enums.EventParticipantInviteStatus;
+using OrganizingEventsService.Infrastructure.Persistence.Models.Enums;
 
 namespace OrganizingEventsService.Infrastructure.Persistence.Contexts;
 
-public partial class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
 
-    public virtual DbSet<AccountModel> Accounts { get; set; }
+    public required DbSet<AccountModel> Accounts { get; set; }
 
-    public virtual DbSet<EventModel> Events { get; set; }
+    public required DbSet<EventModel> Events { get; set; }
 
-    public virtual DbSet<EventParticipantModel> EventParticipants { get; set; }
+    public required DbSet<EventParticipantModel> EventParticipants { get; set; }
 
-    public virtual DbSet<FeedbackModel> Feedbacks { get; set; }
+    public required DbSet<FeedbackModel> Feedbacks { get; set; }
 
-    public virtual DbSet<PermissionModel> Permissions { get; set; }
+    public required DbSet<PermissionModel> Permissions { get; set; }
 
-    public virtual DbSet<RoleModel> Roles { get; set; }
+    public required DbSet<RoleModel> Roles { get; set; }
 
-    public virtual DbSet<RolePermissionModel> RolePermissions { get; set; }
+    public required DbSet<RolePermissionModel> RolePermissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,7 +33,7 @@ public partial class ApplicationDbContext : DbContext
             .HasPostgresEnum<EventStatus>()
             .HasPostgresEnum<EventParticipantInviteStatus>();
 
-        modelBuilder.Entity<Account>(entity =>
+        modelBuilder.Entity<AccountModel>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("account_pkey");
 
@@ -48,12 +48,18 @@ public partial class ApplicationDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
+            entity.Property(e => e.PasswordHashUpdatedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("password_hash_created_at");
             entity.Property(e => e.Email)
                 .HasMaxLength(70)
                 .HasColumnName("email");
             entity.Property(e => e.IsInvite)
                 .HasDefaultValueSql("true")
                 .HasColumnName("is_invite");
+            entity.Property(e => e.IsAdmin)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_admin");
             entity.Property(e => e.Name)
                 .HasMaxLength(70)
                 .HasColumnName("name");
@@ -65,7 +71,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("surname");
         });
 
-        modelBuilder.Entity<Event>(entity =>
+        modelBuilder.Entity<EventModel>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("event_pkey");
 
@@ -101,7 +107,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasConversion<string>();
         });
 
-        modelBuilder.Entity<EventParticipant>(entity =>
+        modelBuilder.Entity<EventParticipantModel>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("event_participant_pkey");
 
@@ -115,6 +121,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IsBanned)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_banned");
+            entity.Property(e => e.IsArchive)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_archive");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
 
             entity.Property(e => e.InviteStatus)
@@ -135,7 +144,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasConstraintName("event_participant_role_pk_fkey");
         });
 
-        modelBuilder.Entity<Feedback>(entity =>
+        modelBuilder.Entity<FeedbackModel>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("feedback_pkey");
 
@@ -155,7 +164,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasConstraintName("feedback_event_participant_pk_fkey");
         });
 
-        modelBuilder.Entity<Permission>(entity =>
+        modelBuilder.Entity<PermissionModel>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("permission_pkey");
 
@@ -172,7 +181,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("name");
         });
 
-        modelBuilder.Entity<Role>(entity =>
+        modelBuilder.Entity<RoleModel>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("role_pkey");
 
@@ -188,7 +197,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("name");
         });
 
-        modelBuilder.Entity<RolePermission>(entity =>
+        modelBuilder.Entity<RolePermissionModel>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("role_permission_pkey");
 
@@ -200,17 +209,15 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.PermissionId).HasColumnName("permission_id");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
 
-            entity.HasOne(d => d.PermissionIdNavigation).WithMany(p => p.RolePermissions)
+            entity.HasOne(d => d.PermissionIdNavigation)
+                .WithMany(p => p.RolePermissions)
                 .HasForeignKey(d => d.PermissionId)
                 .HasConstraintName("role_permission_permission_pk_fkey");
 
-            entity.HasOne(d => d.RoleIdNavigation).WithMany(p => p.RolePermissions)
+            entity.HasOne(d => d.RoleIdNavigation)
+                .WithMany(p => p.RolePermissions)
                 .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("role_permission_role_pk_fkey");
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

@@ -13,6 +13,8 @@ public partial class EventParticipantModel
     public EventParticipantInviteStatus InviteStatus { get; set; }
 
     public bool? IsBanned { get; set; }
+    
+    public bool? IsArchive { get; set; }
 
     public Guid RoleId { get; set; }
 

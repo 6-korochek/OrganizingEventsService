@@ -1,4 +1,4 @@
-namespace OrganizingEventsService.Application.Models.Entities.Enums;
+namespace OrganizingEventsService.Infrastructure.Persistence.Models.Enums;
 
 public enum EventStatus
 {
