@@ -1,29 +1,31 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿#pragma warning disable SA1206
+
+using Microsoft.EntityFrameworkCore;
 using OrganizingEventsService.Application.Models.Entities;
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
 namespace OrganizingEventsService.Infrastructure.Persistence.Contexts;
 
-public partial class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
 
-    public virtual DbSet<Account> Accounts { get; set; }
+    public required DbSet<Account> Accounts { get; set; }
 
-    public virtual DbSet<Event> Events { get; set; }
+    public required DbSet<Event> Events { get; set; }
 
-    public virtual DbSet<EventParticipant> EventParticipants { get; set; }
+    public required DbSet<EventParticipant> EventParticipants { get; set; }
 
-    public virtual DbSet<Feedback> Feedbacks { get; set; }
+    public required DbSet<Feedback> Feedbacks { get; set; }
 
-    public virtual DbSet<Permission> Permissions { get; set; }
+    public required DbSet<Permission> Permissions { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
+    public required DbSet<Role> Roles { get; set; }
 
-    public virtual DbSet<RolePermission> RolePermissions { get; set; }
+    public required DbSet<RolePermission> RolePermissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -46,12 +48,18 @@ public partial class ApplicationDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
+            entity.Property(e => e.PasswordHashUpdatedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("password_hash_created_at");
             entity.Property(e => e.Email)
                 .HasMaxLength(70)
                 .HasColumnName("email");
             entity.Property(e => e.IsInvite)
                 .HasDefaultValueSql("true")
                 .HasColumnName("is_invite");
+            entity.Property(e => e.IsAdmin)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_admin");
             entity.Property(e => e.Name)
                 .HasMaxLength(70)
                 .HasColumnName("name");
@@ -113,6 +121,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IsBanned)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_banned");
+            entity.Property(e => e.IsArchive)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_archive");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
 
             entity.Property(e => e.InviteStatus)
@@ -206,9 +217,5 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("role_permission_role_pk_fkey");
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
