@@ -17,7 +17,7 @@ public static class AccountMapper
             IsInvite = accountModel.IsInvite,
             IsAdmin = accountModel.IsAdmin,
             CreatedAt = accountModel.CreatedAt,
-            PasswordHashUpdatedAt = accountModel.PasswordHashUpdatedAt
+            PasswordHashUpdatedAt = accountModel.PasswordHashUpdatedAt,
         };
     }
 
@@ -33,7 +33,7 @@ public static class AccountMapper
             IsInvite = account.IsInvite,
             IsAdmin = account.IsAdmin,
             CreatedAt = account.CreatedAt,
-            PasswordHashUpdatedAt = account.PasswordHashUpdatedAt
+            PasswordHashUpdatedAt = account.PasswordHashUpdatedAt,
         };
     }
 }

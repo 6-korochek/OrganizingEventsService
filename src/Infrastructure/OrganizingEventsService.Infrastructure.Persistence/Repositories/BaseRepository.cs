@@ -9,8 +9,9 @@ public abstract class BaseRepository<TEntity, TModel>
     (ApplicationDbContext dbContext, DbSet<TModel> dbSet) : IBaseRepository<TEntity>
     where TModel : class, IEntity
 {
-    private DbSet<TModel> DbSet { get; } = dbSet;
     protected ApplicationDbContext DbContext { get; } = dbContext;
+
+    private DbSet<TModel> DbSet { get; } = dbSet;
 
     public async Task<TEntity> GetById(Guid id)
     {
@@ -19,7 +20,7 @@ public abstract class BaseRepository<TEntity, TModel>
         {
             throw new Exception(); // Потом кастомные добавим
         }
-        
+
         return MapToEntity(model);
     }
 

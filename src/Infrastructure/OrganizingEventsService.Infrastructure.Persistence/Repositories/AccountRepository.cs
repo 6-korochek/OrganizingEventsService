@@ -10,9 +10,8 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Repositories;
 
 public class AccountRepository : BaseRepository<Account, AccountModel>, IAccountRepository
 {
-    public AccountRepository(ApplicationDbContext dbContext) : base(dbContext, dbContext.Accounts)
-    { }
-    
+    public AccountRepository(ApplicationDbContext dbContext) : base(dbContext, dbContext.Accounts) { }
+
     public IAsyncEnumerable<Account> GetListByQuery(AccountQuery query)
     {
         IQueryable<AccountModel> queryable = DbContext.Accounts;
@@ -25,7 +24,7 @@ public class AccountRepository : BaseRepository<Account, AccountModel>, IAccount
         {
             queryable = queryable.Where(model => query.Emails.Contains(model.Email));
         }
-        
+
         if (query.Offset is not null)
         {
             queryable = queryable.Skip((int)query.Offset);
@@ -35,7 +34,7 @@ public class AccountRepository : BaseRepository<Account, AccountModel>, IAccount
         {
             queryable = queryable.Take((int)query.Limit);
         }
-        
+
         return queryable.AsAsyncEnumerable().Select(AccountMapper.ToEntity);
     }
 

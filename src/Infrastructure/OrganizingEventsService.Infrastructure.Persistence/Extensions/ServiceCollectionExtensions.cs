@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OrganizingEventsService.Application.Abstractions.Persistence.Repositories;
 using OrganizingEventsService.Infrastructure.Persistence.Contexts;
+using OrganizingEventsService.Infrastructure.Persistence.Repositories;
 
 namespace OrganizingEventsService.Infrastructure.Persistence.Extensions;
 
@@ -14,6 +16,8 @@ public static class ServiceCollectionExtensions
     {
         collection.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetSection("Infrastructure:Persistence:Postgres:ConnectionString").Value));
+
+        collection.AddScoped<IAccountRepository, AccountRepository>();
         return collection;
     }
 }
