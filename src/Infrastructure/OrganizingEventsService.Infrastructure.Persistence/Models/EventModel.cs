@@ -1,8 +1,9 @@
-﻿using OrganizingEventsService.Infrastructure.Persistence.Models.Enums;
+﻿using OrganizingEventsService.Application.Models.Entities;
+using OrganizingEventsService.Infrastructure.Persistence.Models.Enums;
 
 namespace OrganizingEventsService.Infrastructure.Persistence.Models;
 
-public partial class EventModel
+public partial class EventModel : IEntity
 {
     public Guid Id { get; set; }
 
@@ -22,5 +23,5 @@ public partial class EventModel
 
     public string? InviteCode { get; set; }
 
-    public virtual ICollection<EventParticipantModel> EventParticipants { get;  } = new List<EventParticipantModel>();
+    public virtual ICollection<EventParticipantModel> EventParticipants { get; set; } = new List<EventParticipantModel>();
 }

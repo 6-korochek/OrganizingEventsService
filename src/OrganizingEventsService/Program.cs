@@ -2,7 +2,9 @@
 
 using Itmo.Dev.Platform.Common.Extensions;
 using Itmo.Dev.Platform.Logging.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OrganizingEventsService.Application.Extensions;
+using OrganizingEventsService.Infrastructure.Persistence.Contexts;
 using OrganizingEventsService.Infrastructure.Persistence.Extensions;
 using OrganizingEventsService.Presentation.Http.Extensions;
 
@@ -21,6 +23,9 @@ builder.Services
     .AddPresentationHttp();
 
 WebApplication app = builder.Build();
+
+ApplicationDbContext? applicationDbContext = app.Services.GetService<ApplicationDbContext>();
+applicationDbContext!.Database.Migrate();
 
 app.UseSwagger();
 app.UseSwaggerUI();
