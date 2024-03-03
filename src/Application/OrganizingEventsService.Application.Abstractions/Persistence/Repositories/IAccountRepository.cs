@@ -5,5 +5,5 @@ namespace OrganizingEventsService.Application.Abstractions.Persistence.Repositor
 
 public interface IAccountRepository : IBaseRepository<Account>
 {
-    IEnumerable<Account> GetListByQuery(AccountQuery query);
+    IAsyncEnumerable<Account>  GetListByQuery(AccountQuery query);
 }

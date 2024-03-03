@@ -2,11 +2,11 @@ namespace OrganizingEventsService.Application.Abstractions.Persistence.Repositor
 
 public interface IBaseRepository<TEntity>
 {
-    public abstract TEntity GetById(Guid id);
+    Task<TEntity> GetById(Guid id);
 
-    public abstract void Add(TEntity entity);
+    Task Add(TEntity entity);
 
-    public abstract void Update(TEntity entity);
+    Task Update(TEntity entity);
 
-    public abstract void DeleteById(Guid id);
+    Task DeleteById(Guid id);
 }
