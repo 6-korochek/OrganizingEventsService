@@ -13,7 +13,7 @@ public interface IEventRepository : IBaseRepository<Event>
         bool includeRole = false, 
         bool includeAccount = false);
 
-    Task<EventParticipant> GetParticipantById(Guid id);
+    Task<EventParticipant> GetParticipantInEvent(Guid accountId, Guid eventId);
 
     Task AddParticipants(Guid eventId, IEnumerable<EventParticipant> eventParticipants);
     

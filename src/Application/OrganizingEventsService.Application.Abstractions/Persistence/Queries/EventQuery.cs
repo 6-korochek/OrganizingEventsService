@@ -13,7 +13,7 @@ public class EventQuery
     
     public ushort? Offset;
     
-    public bool IncludeParticipants = false;
+    public bool IncludeParticipants;
     
     public EventQuery WithId(Guid id)
     {
@@ -39,9 +39,9 @@ public class EventQuery
         return this;
     }
 
-    public EventQuery WithParticipants()
+    public EventQuery WithParticipants(bool includeParticipants = true)
     {
-        IncludeParticipants = true;
+        IncludeParticipants = includeParticipants;
         return this;
     }
 }

@@ -5,6 +5,7 @@ using OrganizingEventsService.Application.Models.Entities;
 using OrganizingEventsService.Infrastructure.Persistence.Contexts;
 using OrganizingEventsService.Infrastructure.Persistence.Mapping;
 using OrganizingEventsService.Infrastructure.Persistence.Models;
+using EventParticipantInviteStatus = OrganizingEventsService.Application.Models.Entities.Enums.EventParticipantInviteStatus;
 using EventStatus = OrganizingEventsService.Application.Models.Entities.Enums.EventStatus;
 
 namespace OrganizingEventsService.Infrastructure.Persistence.Repositories;
@@ -12,7 +13,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Repositories;
 public class EventRepository : BaseRepository<Event, EventModel>, IEventRepository
 {
     public EventRepository(ApplicationDbContext dbContext) : base(dbContext, dbContext.Events) { }
-    
+
     public IAsyncEnumerable<Event> GetListByQuery(EventQuery query)
     {
         IQueryable<EventModel> queryable = DbContext.Events;
@@ -43,7 +44,49 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
 
         return queryable.AsAsyncEnumerable().Select(EventMapper.ToEntity);
     }
-    
+
+    public IAsyncEnumerable<EventParticipant> GetParticipantListByQuery(EventParticipantQuery query)
+    {
+        IQueryable<EventParticipantModel> queryable = DbContext.EventParticipants;
+        if (query.Ids.Any())
+        {
+            queryable = queryable.Where(model => query.Ids.Contains(model.Id));
+        }
+
+        if (query.EventIds.Any())
+        {
+            queryable = queryable.Where(model => query.EventIds.Contains(model.EventId));
+        }
+
+        if (query.AccountIds.Any())
+        {
+            queryable = queryable.Where(model => query.AccountIds.Contains(model.AccountId));
+        }
+
+        if (query.InviteStatuses.Any())
+        {
+            queryable = queryable.Where(model =>
+                query.InviteStatuses.Contains((EventParticipantInviteStatus)model.InviteStatus));
+        }
+
+        if (query.IsBanned)
+        {
+            queryable = queryable.Include(model => model.IsBanned);
+        }
+
+        if (query.Offset is not null)
+        {
+            queryable = queryable.Skip((int)query.Offset);
+        }
+
+        if (query.Limit is not null)
+        {
+            queryable = queryable.Take((int)query.Limit);
+        }
+
+        return queryable.AsAsyncEnumerable().Select(EventParticipantMapper.ToEntity);
+    }
+
     public async Task<Event> GetEventByInviteCode(string inviteCode)
     {
         EventModel? model = await DbContext.Events.FirstOrDefaultAsync(model => model.InviteCode == inviteCode);
@@ -54,13 +97,14 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
 
         return MapToEntity(model);
     }
-    
+
     public IAsyncEnumerable<EventParticipant> GetParticipantListByEventId(
-        Guid eventId, 
-        bool includeRole = false, 
+        Guid eventId,
+        bool includeRole = false,
         bool includeAccount = false)
     {
-        IQueryable<EventParticipantModel> queryable = DbContext.EventParticipants.Where(model => model.EventId == eventId);
+        IQueryable<EventParticipantModel> queryable =
+            DbContext.EventParticipants.Where(model => model.EventId == eventId);
         if (includeRole)
         {
             queryable = queryable.Include(model => model.RoleIdNavigation);
@@ -74,13 +118,13 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
         return queryable.AsAsyncEnumerable().Select(EventParticipantMapper.ToEntity);
     }
 
-    public async Task<EventParticipant> GetParticipantById(Guid id)
+    public async Task<EventParticipant> GetParticipantInEvent(Guid accountId, Guid eventId)
     {
         EventParticipantModel? model = await DbContext.EventParticipants
             .Include(model => model.RoleIdNavigation)
             .Include(model => model.AccountIdNavigation)
-            .FirstOrDefaultAsync(model => model.Id == id);
-        
+            .FirstOrDefaultAsync(model => model.AccountId == accountId && model.EventId == eventId);
+
         if (model is null)
         {
             throw new Exception(); // Потом кастомные добавим 
@@ -95,8 +139,9 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
         var newParticipants =
             eventParticipants
                 .Select(EventParticipantMapper.ToModel)
-                .ExceptBy(existsParticipant.Select(model => model.Id), model => model.Id);
-        
+                .ExceptBy(existsParticipant.Select(model => model.AccountId), model => model.AccountId);
+        foreach (var participant in newParticipants) participant.EventId = eventId;
+
         await DbContext.EventParticipants.AddRangeAsync(newParticipants);
         await DbContext.SaveChangesAsync();
     }
