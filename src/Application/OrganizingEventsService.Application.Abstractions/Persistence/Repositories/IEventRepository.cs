@@ -6,6 +6,8 @@ namespace OrganizingEventsService.Application.Abstractions.Persistence.Repositor
 public interface IEventRepository : IBaseRepository<Event>
 {
     IAsyncEnumerable<Event> GetListByQuery(EventQuery query);
+
+    IAsyncEnumerable<EventParticipant> GetParticipantListByQuery(EventParticipantQuery query);
     
     Task<Event> GetEventByInviteCode(string inviteCode);
 

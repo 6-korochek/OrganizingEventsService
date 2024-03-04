@@ -5,8 +5,7 @@ using OrganizingEventsService.Application.Models.Entities;
 using OrganizingEventsService.Infrastructure.Persistence.Contexts;
 using OrganizingEventsService.Infrastructure.Persistence.Mapping;
 using OrganizingEventsService.Infrastructure.Persistence.Models;
-using EventParticipantInviteStatus = OrganizingEventsService.Application.Models.Entities.Enums.EventParticipantInviteStatus;
-using EventStatus = OrganizingEventsService.Application.Models.Entities.Enums.EventStatus;
+using OrganizingEventsService.Infrastructure.Persistence.Repositories.QueryAdapters;
 
 namespace OrganizingEventsService.Infrastructure.Persistence.Repositories;
 
@@ -16,75 +15,14 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
 
     public IAsyncEnumerable<Event> GetListByQuery(EventQuery query)
     {
-        IQueryable<EventModel> queryable = DbContext.Events;
-        if (query.Ids.Any())
-        {
-            queryable = queryable.Where(model => query.Ids.Contains(model.Id));
-        }
-
-        if (query.Statuses.Any())
-        {
-            queryable = queryable.Where(model => query.Statuses.Contains((EventStatus)model.Status));
-        }
-
-        if (query.IncludeParticipants)
-        {
-            queryable = queryable.Include(model => model.EventParticipants);
-        }
-
-        if (query.Offset is not null)
-        {
-            queryable = queryable.Skip((int)query.Offset);
-        }
-
-        if (query.Limit is not null)
-        {
-            queryable = queryable.Take((int)query.Limit);
-        }
-
-        return queryable.AsAsyncEnumerable().Select(EventMapper.ToEntity);
+        var queryAdapter = new EventQueryToEfOrmAdapter(query, DbContext);
+        return queryAdapter.Adapt().AsAsyncEnumerable().Select(EventMapper.ToEntity);
     }
 
     public IAsyncEnumerable<EventParticipant> GetParticipantListByQuery(EventParticipantQuery query)
     {
-        IQueryable<EventParticipantModel> queryable = DbContext.EventParticipants;
-        if (query.Ids.Any())
-        {
-            queryable = queryable.Where(model => query.Ids.Contains(model.Id));
-        }
-
-        if (query.EventIds.Any())
-        {
-            queryable = queryable.Where(model => query.EventIds.Contains(model.EventId));
-        }
-
-        if (query.AccountIds.Any())
-        {
-            queryable = queryable.Where(model => query.AccountIds.Contains(model.AccountId));
-        }
-
-        if (query.InviteStatuses.Any())
-        {
-            queryable = queryable.Where(model =>
-                query.InviteStatuses.Contains((EventParticipantInviteStatus)model.InviteStatus));
-        }
-
-        if (query.IsBanned)
-        {
-            queryable = queryable.Include(model => model.IsBanned);
-        }
-
-        if (query.Offset is not null)
-        {
-            queryable = queryable.Skip((int)query.Offset);
-        }
-
-        if (query.Limit is not null)
-        {
-            queryable = queryable.Take((int)query.Limit);
-        }
-
-        return queryable.AsAsyncEnumerable().Select(EventParticipantMapper.ToEntity);
+        var queryAdapter = new EventParticipantToEfOrmAdapter(query, DbContext);
+        return queryAdapter.Adapt().AsAsyncEnumerable().Select(EventParticipantMapper.ToEntity);
     }
 
     public async Task<Event> GetEventByInviteCode(string inviteCode)
@@ -140,7 +78,6 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
             eventParticipants
                 .Select(EventParticipantMapper.ToModel)
                 .ExceptBy(existsParticipant.Select(model => model.AccountId), model => model.AccountId);
-        foreach (var participant in newParticipants) participant.EventId = eventId;
 
         await DbContext.EventParticipants.AddRangeAsync(newParticipants);
         await DbContext.SaveChangesAsync();
