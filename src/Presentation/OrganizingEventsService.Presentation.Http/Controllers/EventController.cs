@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OrganizingEventsService.Application.Abstractions.Persistence.Queries;
-using OrganizingEventsService.Application.Abstractions.Persistence.Repositories;
-using OrganizingEventsService.Application.Models.Entities;
+using OrganizingEventsService.Application.Contracts.Services;
+using OrganizingEventsService.Application.Models.Dto.Account;
+using OrganizingEventsService.Application.Models.Dto.Common;
+using OrganizingEventsService.Application.Models.Dto.Event;
+using OrganizingEventsService.Application.Models.Dto.Participant;
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
 namespace OrganizingEventsService.Presentation.Http.Controllers;
@@ -10,69 +13,122 @@ namespace OrganizingEventsService.Presentation.Http.Controllers;
 [Route("[controller]")]
 public class EventController : ControllerBase
 {
-    private readonly IEventRepository _eventRepository;
+    private readonly EventService _eventService;
 
-    public EventController(IEventRepository eventRepository)
+    public EventController(EventService eventService)
     {
-        _eventRepository = eventRepository;
+        _eventService = eventService;
     }
     
-    [HttpGet("{id}")]
-    public IAsyncEnumerable<Event> Get(Guid id)
+    [Authorize("IsAuthenticated")]
+    [HttpGet]
+    public ActionResult<EventDto> Get(
+        [FromQuery(Name = "event_id")] Guid? eventId,
+        [FromQuery(Name = "invite_code")] string? inviteCode)
     {
-        var query = new EventQuery().WithId(id).WithParticipants();
-        var eventEntities = _eventRepository.GetListByQuery(query);
-        return eventEntities;
+        EventDto response = _eventService.GetEventInfo(eventId, inviteCode);
+        return response;
     }
+    
+    [Authorize("IsAuthenticated")]
+    [HttpPost]
+    public ActionResult<NewEventDto> Create(
+        [FromBody] CreateEventDto createEventDto,
+        AuthenticatedAccountDto authenticatedAccountDto)
+    {
+        NewEventDto response = _eventService.CreateEvent(
+            authenticatedAccountDto.Account.Id,
+            createEventDto);
 
-    [HttpPost("")]
-    public async Task<ActionResult<Event>> Create()
-    {
-        var eventEntity= new Event
-        {
-            Id = new Guid(),
-            Name = "Gatchi Party",
-            StartDatetime = new DateTime(),
-            Status = EventStatus.Planed,
-            MaxParticipant = 10
-        };
-        
-        await _eventRepository.Add(eventEntity);
-        return eventEntity;
+        return response;
     }
     
-    [HttpPost("{eventId}")]
-    public async Task<ActionResult<string>> AddParticipants(Guid eventId)
+    // Only Organizers
+    [HttpPatch("{id}")]
+    public ActionResult<Guid> PartiallyUpdate(Guid id,[FromBody] UpdateEventDto updateEventDto)
     {
-        var participants = new List<EventParticipant>();
-        var participant1 = new EventParticipant
-        {
-            Id = new Guid(),
-            AccountId = eventId,
-            EventId = eventId,
-            InviteStatus = EventParticipantInviteStatus.Pending,
-            RoleId = eventId
-        };
-        
-        participants.Add(participant1);
-        await _eventRepository.AddParticipants(eventId, participants);
-        return "Ok";
+        Guid response = _eventService.PartiallyUpdateEvent(id, updateEventDto);
+        return response;
     }
     
-    [HttpPut("{id}")]
-    public async Task<ActionResult<Event>> Update(Guid id)
-    {
-        var eventEntity = await _eventRepository.GetById(id);
-        eventEntity.InviteCode = "WOOP";
-        await _eventRepository.Update(eventEntity);
-        
-        return eventEntity;
-    }
-    
+    // Only Organizers
     [HttpDelete("{id}")]
-    public async Task<ActionResult<string>> Delete(Guid id)
+    public void Delete(Guid id)
     {
-        await _eventRepository.DeleteById(id);
-        return "Ok";
+        _eventService.DeleteEventById(id);
     }
+    
+    [Authorize("IsAuthenticated")]
+    [HttpGet("/me")]
+    public IEnumerable<EventDto> GetMy(
+        [FromQuery(Name = "event_status")] EventStatus status,
+        [FromQuery(Name = "limit")] uint? limit,
+        [FromQuery(Name = "offset")] uint? offset,
+        AuthenticatedAccountDto authenticatedAccountDto)
+    {
+        PaginationDto paginationDto = new PaginationDto
+        {
+            Limit = limit,
+            Offset = offset
+        };
+
+        IEnumerable<EventDto> response = _eventService.GetEventsWhereAccountIsParticipant(
+            authenticatedAccountDto.Account.Id, 
+            status, 
+            paginationDto);
+
+        return response;
+    }
+    
+    // Only Organizers
+    [HttpGet("{id}/members")]
+    public IEnumerable<ParticipantDto> GetMembers(Guid id)
+    {
+        IEnumerable<ParticipantDto> response = _eventService.GetParticipants(id);
+        return response;
+    }
+    
+    // Only Organizers
+    [HttpPost("{id}/members")]
+    public void CreateMembers(Guid id, [FromBody] IEnumerable<CreateParticipantDto> createParticipantDtoList)
+    {
+        IEnumerable<CreateParticipantDto> participantList = createParticipantDtoList.ToList();
+        _eventService.CreateParticipants(id, participantList);
+    }
+    
+    // Only Organizers
+    [HttpDelete("{id}/members")]
+    public void DeleteMembers(Guid id, [FromBody] IEnumerable<string> accountEmails)
+    {
+        _eventService.DeleteParticipantsByEmails(accountEmails);
+    }
+    
+    // ?????????????????????????????????????????????????????
+    // Only Organizers
+    [HttpGet($"{{id}}/members/{{accountId}}")]
+    public ActionResult<ParticipantDto> GetMember(Guid accountId)
+    {
+        var response = _eventService.GetParticipantByAccountId(accountId);
+        return response;
+    }
+    
+    // ?????????????????????????????????????????????????????
+    // Only Organizers
+    [HttpPatch($"{{id}}/members/{{accountId}}")]
+    public ActionResult<ParticipantDto> PartiallyUpdateMember(Guid accountId, [FromBody] UpdateParticipantDto updateParticipantDto)
+    {
+        var response = _eventService.PartiallyUpdateParticipant(accountId, updateParticipantDto);
+        return response;
+    }
+    
+    // ?????????????????????????????????????????????????????
+    // Only Organizers
+    [HttpDelete($"{{id}}/members/{{accountId}}")]
+    public void DeleteMember(Guid accountId)
+    {
+        _eventService.DeleteParticipantByAccountId(accountId);
+    }
+    
+    // Feedbacks
+    ///////////////////////////////
 }

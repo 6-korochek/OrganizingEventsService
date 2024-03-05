@@ -19,7 +19,7 @@ public abstract class EventService
 
     public abstract IEnumerable<EventDto> GetEventsWhereAccountIsParticipant(
         Guid accountId,
-        EventParticipantInviteStatus eventParticipant,
+        EventStatus status,
         PaginationDto paginationDto);
 
     public abstract NewEventDto CreateEvent(Guid organizerId, CreateEventDto createEventDto);
@@ -34,26 +34,23 @@ public abstract class EventService
 
     public abstract IEnumerable<ParticipantDto> GetParticipants(Guid eventId);
 
-    public abstract ParticipantDto GetParticipantById(Guid participantId);
+    public abstract ParticipantDto GetParticipantByAccountId(Guid accountId);
 
-    public abstract void CreateParticipants(IEnumerable<CreateParticipantDto> createParticipantDtos);
+    public abstract void CreateParticipants(Guid eventId, IEnumerable<CreateParticipantDto> createParticipantDtoList);
 
     public abstract ParticipantDto PartiallyUpdateParticipant(
-        Guid participantId,
+        Guid accountId,
         UpdateParticipantDto updateParticipantDto);
 
     public abstract void DeleteParticipantsByEmails(IEnumerable<string> accountEmails);
 
-    public abstract void DeleteParticipantByAccountId(Guid currentAccountId);
+    public abstract void DeleteParticipantByAccountId(Guid accountId);
 
-    public abstract IEnumerable<FeedbackDto> GetFeedbacksByEventId(Guid eventId, Guid currentAccountId);
+    public abstract IEnumerable<FeedbackDto> GetFeedbacksByEventId(Guid eventId);
 
-    public abstract Guid CreateFeedback(Guid eventId, Guid currentAccountId, CreateFeedbackDto createFeedbackDto);
+    public abstract Guid CreateFeedback(Guid eventId, CreateFeedbackDto createFeedbackDto);
 
-    public abstract FeedbackDto PartiallyUpdateFeedback(
-        Guid feedbackId,
-        Guid currentAccountId,
-        UpdateFeedbackDto updateFeedbackDto);
+    public abstract FeedbackDto PartiallyUpdateFeedback(Guid feedbackId, UpdateFeedbackDto updateFeedbackDto);
 
-    public abstract void DeleteFeedbackById(Guid feedbackId, Guid currentAccountId);
+    public abstract void DeleteFeedbackById(Guid feedbackId);
 }

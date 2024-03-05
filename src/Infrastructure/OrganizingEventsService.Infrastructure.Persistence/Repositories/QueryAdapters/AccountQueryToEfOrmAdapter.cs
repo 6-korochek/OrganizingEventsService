@@ -4,7 +4,8 @@ using OrganizingEventsService.Infrastructure.Persistence.Models;
 
 namespace OrganizingEventsService.Infrastructure.Persistence.Repositories.QueryAdapters;
 
-public class AccountQueryToEfOrmAdapter(AccountQuery query, ApplicationDbContext dbContext) : QueryToEfOrmAdapter<AccountQuery, AccountModel>(query, dbContext)
+public class AccountQueryToEfOrmAdapter(AccountQuery query, ApplicationDbContext dbContext) 
+    : QueryToEfOrmAdapter<AccountQuery, AccountModel>(query, dbContext)
 {
     public override IQueryable<AccountModel> Adapt()
     {

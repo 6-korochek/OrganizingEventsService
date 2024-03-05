@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using OrganizingEventsService.Application.Abstractions.Persistence.Repositories;
-using OrganizingEventsService.Application.Models.Entities;
-using OrganizingEventsService.Application.Abstractions.Persistence.Queries;
+using OrganizingEventsService.Application.Contracts.Services;
+using OrganizingEventsService.Application.Models.Dto.Account;
 
 namespace OrganizingEventsService.Presentation.Http.Controllers;
 
@@ -9,38 +8,25 @@ namespace OrganizingEventsService.Presentation.Http.Controllers;
 [Route("[controller]")]
 public class AccountController : ControllerBase
 {
-    private readonly IAccountRepository _accountRepository;
+    private readonly IAccountService _accountService;
 
-    public AccountController(IAccountRepository accountRepository)
+    public AccountController(IAccountService accountService)
     {
-        _accountRepository = accountRepository;
+        _accountService = accountService;
     }
     
+    // Only Admin
     [HttpGet("{id}")]
-    public IAsyncEnumerable<Account> Get(Guid id)
+    public ActionResult<AccountDto> Get(Guid id)
     {
-        AccountQuery query = new AccountQuery().WithId(id).WithEmail("Фиг вам");
-        IAsyncEnumerable<Account> accounts = _accountRepository.GetListByQuery(query);
-        return accounts;
-    }
-
-    [HttpPost("")]
-    public async Task<ActionResult<Account>> Create()
-    {
-        var account = new Account
-        {
-            Id = new Guid(),
-            Name = "Andrey",
-            Surname = "Kotovschikow",
-            Email = "Фиг вам",
-            PasswordHash = "jjnfslnnfskfsfs",
-            IsInvite = true,
-            IsAdmin = true,
-            CreatedAt = new DateTime(),
-            PasswordHashUpdatedAt = new DateTime()
-        };
-        
-        await _accountRepository.Add(account);
+        AccountDto account = _accountService.GetAccountById(id);
         return account;
+    }
+    
+    // Only Admin
+    [HttpDelete("{id}")]
+    public void Delete(Guid id)
+    {
+        _accountService.DeleteAccountById(id);
     }
 }

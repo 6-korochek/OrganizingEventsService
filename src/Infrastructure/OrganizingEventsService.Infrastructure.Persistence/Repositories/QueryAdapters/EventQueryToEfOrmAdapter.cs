@@ -6,7 +6,8 @@ using OrganizingEventsService.Infrastructure.Persistence.Models;
 
 namespace OrganizingEventsService.Infrastructure.Persistence.Repositories.QueryAdapters;
 
-public class EventQueryToEfOrmAdapter(EventQuery query, ApplicationDbContext dbContext) : QueryToEfOrmAdapter<EventQuery, EventModel>(query, dbContext)
+public class EventQueryToEfOrmAdapter(EventQuery query, ApplicationDbContext dbContext) 
+    : QueryToEfOrmAdapter<EventQuery, EventModel>(query, dbContext)
 {
     public override IQueryable<EventModel> Adapt()
     {
