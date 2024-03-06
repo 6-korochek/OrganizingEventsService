@@ -5,7 +5,7 @@ using OrganizingEventsService.Application.Models.Dto.Account;
 
 namespace OrganizingEventsService.Presentation.Http.Controllers;
 
-[Route("/auth")]
+[Route("[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly AuthService _authService;

@@ -55,7 +55,7 @@ public class EventController : ControllerBase
     }
     
     [Authorize("IsAuthenticated")]
-    [HttpGet("/me")]
+    [HttpGet("/my")]
     public IEnumerable<EventDto> GetMy(
         [FromQuery(Name = "event_status")] EventStatus status,
         [FromQuery(Name = "limit")] uint? limit,
