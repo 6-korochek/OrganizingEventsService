@@ -116,15 +116,15 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.AccountId).HasColumnName("account_id");
-            entity.Property(e => e.EventId).HasColumnName("event_id");
+            entity.Property(e => e.AccountId).HasColumnName("account_pk");
+            entity.Property(e => e.EventId).HasColumnName("event_pk");
             entity.Property(e => e.IsBanned)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_banned");
             entity.Property(e => e.IsArchive)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_archive");
-            entity.Property(e => e.RoleId).HasColumnName("role_id");
+            entity.Property(e => e.RoleId).HasColumnName("role_pk");
 
             entity.Property(e => e.InviteStatus)
                 .HasColumnName("invite_status")
@@ -153,7 +153,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.EventParticipantId).HasColumnName("event_participant_id");
+            entity.Property(e => e.EventParticipantId).HasColumnName("event_participant_pk");
             entity.Property(e => e.Rating)
                 .HasPrecision(1)
                 .HasColumnName("rating");
@@ -206,8 +206,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.PermissionId).HasColumnName("permission_id");
-            entity.Property(e => e.RoleId).HasColumnName("role_id");
+            entity.Property(e => e.PermissionId).HasColumnName("permission_pk");
+            entity.Property(e => e.RoleId).HasColumnName("role_pk");
 
             entity.HasOne(d => d.PermissionIdNavigation)
                 .WithMany(p => p.RolePermissions)

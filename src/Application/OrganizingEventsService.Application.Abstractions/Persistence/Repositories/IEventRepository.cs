@@ -5,15 +5,23 @@ namespace OrganizingEventsService.Application.Abstractions.Persistence.Repositor
 
 public interface IEventRepository : IBaseRepository<Event>
 {
-    IEnumerable<Event> GetListByQuery(EventQuery query);
+    IAsyncEnumerable<Event> GetListByQuery(EventQuery query);
 
-    IEnumerable<EventParticipant> GetParticipantListByQuery(EventParticipantQuery query);
+    IAsyncEnumerable<EventParticipant> GetParticipantListByQuery(EventParticipantQuery query);
+    
+    Task<Event> GetEventByInviteCode(string inviteCode);
 
-    EventParticipant GetParticipantById(Guid id);
+    IAsyncEnumerable<EventParticipant> GetParticipantListByEventId(Guid eventId, 
+        bool includeRole = false, 
+        bool includeAccount = false);
 
-    EventParticipant GetEventByInviteCode(string inviteCode);
+    Task<EventParticipant> GetParticipantInEvent(Guid accountId, Guid eventId);
 
-    void UpdateParticipant(EventParticipant eventParticipant);
+    Task AddParticipants(Guid eventId, IEnumerable<EventParticipant> eventParticipants);
+    
+    Task UpdateParticipant(EventParticipant eventParticipant);
 
-    void DeleteParticipant(EventParticipant eventParticipant);
+    Task DeleteParticipant(EventParticipant eventParticipant);
+
+    IAsyncEnumerable<Feedback> GetFeedbackListByEventId(Guid eventId, bool includeAuthor = false);
 }

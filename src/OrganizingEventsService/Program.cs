@@ -5,6 +5,7 @@ using Itmo.Dev.Platform.Logging.Extensions;
 using OrganizingEventsService.Application.Extensions;
 using OrganizingEventsService.Infrastructure.Persistence.Extensions;
 using OrganizingEventsService.Presentation.Http.Extensions;
+using OrganizingEventsService.Presentation.Http.Middlewares;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +23,11 @@ builder.Services
 
 WebApplication app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseRouting();
 app.MapControllers();
+app.UseAuthorization();
 
 await app.RunAsync();

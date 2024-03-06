@@ -1,6 +1,8 @@
-﻿namespace OrganizingEventsService.Infrastructure.Persistence.Models;
+﻿using OrganizingEventsService.Application.Models.Entities;
 
-public partial class RoleModel
+namespace OrganizingEventsService.Infrastructure.Persistence.Models;
+
+public partial class RoleModel : IEntity
 {
     public Guid Id { get; set; }
 

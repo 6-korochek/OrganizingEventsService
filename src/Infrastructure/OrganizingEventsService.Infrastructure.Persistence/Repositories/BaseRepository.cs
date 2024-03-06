@@ -33,8 +33,9 @@ public abstract class BaseRepository<TEntity, TModel>
 
     public async Task Update(TEntity entity)
     {
-        TModel model = MapToModel(entity);
-        DbSet.Update(model);
+        TModel newModelState = MapToModel(entity);
+        TModel? currentModelState = await DbSet.FindAsync(newModelState.Id);
+        DbContext.Entry(currentModelState!).CurrentValues.SetValues(newModelState);
         await DbContext.SaveChangesAsync();
     }
 
