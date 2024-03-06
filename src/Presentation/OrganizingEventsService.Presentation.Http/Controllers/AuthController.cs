@@ -5,7 +5,6 @@ using OrganizingEventsService.Application.Models.Dto.Account;
 
 namespace OrganizingEventsService.Presentation.Http.Controllers;
 
-[ApiController]
 [Route("/auth")]
 public class AuthController : ControllerBase
 {

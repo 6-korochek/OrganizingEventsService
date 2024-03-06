@@ -12,40 +12,40 @@ public class EventParticipantToEfOrmAdapter(EventParticipantQuery query, Applica
     public override IQueryable<EventParticipantModel> Adapt()
     {
         IQueryable<EventParticipantModel> queryable = DbContext.EventParticipants;
-        if (query.Ids.Any())
+        if (Query.Ids.Any())
         {
-            queryable = queryable.Where(model => query.Ids.Contains(model.Id));
+            queryable = queryable.Where(model => Query.Ids.Contains(model.Id));
         }
 
-        if (query.EventIds.Any())
+        if (Query.EventIds.Any())
         {
-            queryable = queryable.Where(model => query.EventIds.Contains(model.EventId));
+            queryable = queryable.Where(model => Query.EventIds.Contains(model.EventId));
         }
 
-        if (query.AccountIds.Any())
+        if (Query.AccountIds.Any())
         {
-            queryable = queryable.Where(model => query.AccountIds.Contains(model.AccountId));
+            queryable = queryable.Where(model => Query.AccountIds.Contains(model.AccountId));
         }
 
-        if (query.InviteStatuses.Any())
+        if (Query.InviteStatuses.Any())
         {
             queryable = queryable.Where(model =>
-                query.InviteStatuses.Contains((EventParticipantInviteStatus)model.InviteStatus));
+                Query.InviteStatuses.Contains((EventParticipantInviteStatus)model.InviteStatus));
         }
 
-        if (query.IsBanned)
+        if (Query.IsBanned)
         {
             queryable = queryable.Include(model => model.IsBanned);
         }
 
-        if (query.Offset is not null)
+        if (Query.Offset is not null)
         {
-            queryable = queryable.Skip((int)query.Offset);
+            queryable = queryable.Skip((int)Query.Offset);
         }
 
-        if (query.Limit is not null)
+        if (Query.Limit is not null)
         {
-            queryable = queryable.Take((int)query.Limit);
+            queryable = queryable.Take((int)Query.Limit);
         }
 
         return queryable;

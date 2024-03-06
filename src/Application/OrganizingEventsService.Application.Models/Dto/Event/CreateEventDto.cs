@@ -1,6 +1,7 @@
 #pragma warning disable CA1716
 
 using OrganizingEventsService.Application.Models.Entities.Enums;
+using System.Text.Json.Serialization;
 
 namespace OrganizingEventsService.Application.Models.Dto.Event;
 

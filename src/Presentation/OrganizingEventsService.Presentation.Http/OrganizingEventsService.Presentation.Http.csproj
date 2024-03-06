@@ -7,6 +7,8 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Application\OrganizingEventsService.Application.Abstractions\OrganizingEventsService.Application.Abstractions.csproj" />
       <ProjectReference Include="..\..\Application\OrganizingEventsService.Application.Models\OrganizingEventsService.Application.Models.csproj" />
+
+
     </ItemGroup>
 
 

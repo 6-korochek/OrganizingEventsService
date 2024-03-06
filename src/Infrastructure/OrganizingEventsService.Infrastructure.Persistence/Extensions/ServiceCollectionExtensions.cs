@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
 
         collection.AddScoped<IAccountRepository, AccountRepository>();
         collection.AddScoped<IEventRepository, EventRepository>();
+        collection.AddScoped<IRoleRepository, RoleRepository>();
         
         return collection;
     }

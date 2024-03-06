@@ -12,29 +12,29 @@ public class EventQueryToEfOrmAdapter(EventQuery query, ApplicationDbContext dbC
     public override IQueryable<EventModel> Adapt()
     {
         IQueryable<EventModel> queryable = DbContext.Events;
-        if (query.Ids.Any())
+        if (Query.Ids.Any())
         {
-            queryable = queryable.Where(model => query.Ids.Contains(model.Id));
+            queryable = queryable.Where(model => Query.Ids.Contains(model.Id));
         }
 
-        if (query.Statuses.Any())
+        if (Query.Statuses.Any())
         {
-            queryable = queryable.Where(model => query.Statuses.Contains((EventStatus)model.Status));
+            queryable = queryable.Where(model => Query.Statuses.Contains((EventStatus)model.Status));
         }
 
-        if (query.IncludeParticipants)
+        if (Query.IncludeParticipants)
         {
             queryable = queryable.Include(model => model.EventParticipants);
         }
 
-        if (query.Offset is not null)
+        if (Query.Offset is not null)
         {
-            queryable = queryable.Skip((int)query.Offset);
+            queryable = queryable.Skip((int)Query.Offset);
         }
 
-        if (query.Limit is not null)
+        if (Query.Limit is not null)
         {
-            queryable = queryable.Take((int)query.Limit);
+            queryable = queryable.Take((int)Query.Limit);
         }
 
         return queryable;

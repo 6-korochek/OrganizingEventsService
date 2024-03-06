@@ -9,7 +9,6 @@ using OrganizingEventsService.Application.Models.Entities.Enums;
 
 namespace OrganizingEventsService.Presentation.Http.Controllers;
 
-[ApiController]
 [Route("[controller]")]
 public class EventController : ControllerBase
 {
@@ -32,14 +31,10 @@ public class EventController : ControllerBase
     
     [Authorize("IsAuthenticated")]
     [HttpPost]
-    public ActionResult<NewEventDto> Create(
-        [FromBody] CreateEventDto createEventDto,
-        AuthenticatedAccountDto authenticatedAccountDto)
+    public ActionResult<NewEventDto> Create([FromBody] CreateEventDto createEventDto)
     {
-        NewEventDto response = _eventService.CreateEvent(
-            authenticatedAccountDto.Account.Id,
-            createEventDto);
-
+        var currentAccount = HttpContext.Items["CurrentAccount"] as AuthenticatedAccountDto;
+        NewEventDto response = _eventService.CreateEvent(currentAccount!.Account.Id, createEventDto);
         return response;
     }
     
@@ -51,7 +46,8 @@ public class EventController : ControllerBase
         return response;
     }
     
-    // Only Organizers
+    [Authorize("IsAuthenticated")]
+    [Authorize("IsOrganizer")]
     [HttpDelete("{id}")]
     public void Delete(Guid id)
     {
