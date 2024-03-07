@@ -21,7 +21,7 @@ public class EventController : ControllerBase
         _eventService = eventService;
     }
     
-    // ???????????????????????????????????????????????
+    [Authorize("IsInvited")]
     [HttpGet]
     public async Task<ActionResult<EventDto>> Get(
         [FromQuery(Name = "event_id")] Guid? eventId,
@@ -41,9 +41,9 @@ public class EventController : ControllerBase
     
     [Authorize("IsOrganizer")]
     [HttpPatch("{id}")]
-    public ActionResult<Guid> PartiallyUpdate(Guid id,[FromBody] UpdateEventDto updateEventDto)
+    public async Task<ActionResult<Guid>> PartiallyUpdate(Guid id,[FromBody] UpdateEventDto updateEventDto)
     {
-        Guid response = _eventService.PartiallyUpdateEvent(id, updateEventDto);
+        Guid response = await _eventService.PartiallyUpdateEvent(id, updateEventDto);
         return response;
     }
     

@@ -1,5 +1,6 @@
 using OrganizingEventsService.Application.Abstractions.Persistence.Queries;
 using OrganizingEventsService.Application.Abstractions.Persistence.Repositories;
+using OrganizingEventsService.Application.ApplicationConstants;
 using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.Models.Dto.Common;
 using OrganizingEventsService.Application.Models.Dto.Event;
@@ -28,7 +29,7 @@ public class EventServiceImpl : EventService
             throw new Exception("Invalid eventId and inviteCode!"); // Потом кастомные добавим
         }
 
-        Event? eventEntity = null;
+        Event eventEntity = null!;
         if (inviteCode != null)
         {
             eventEntity = await _eventRepository.GetEventByInviteCode(inviteCode);
@@ -37,15 +38,10 @@ public class EventServiceImpl : EventService
             eventEntity = await _eventRepository.GetById((Guid)eventId);
         }
 
-        if (eventEntity == null)
-        {
-            throw new Exception("Event not found!"); // Потом кастомные добавим
-        }
-
         var query = new EventParticipantQuery()
             .WithEventId(eventEntity.Id)
-            .WithRoleName("Organizer")
-            .WithAccount()// Хз как роль назовем, пока так
+            .WithRoleId(Roles.ORGANIZER)
+            .WithAccount()
             .WithLimit(1);
 
         var organizer = await _eventRepository.GetParticipantListByQuery(query).FirstAsync();
@@ -115,13 +111,21 @@ public class EventServiceImpl : EventService
             MaxParticipant = createEventDto.MaxParticipant,
             InviteCode = GenerateInviteCode()
         };
-
-        if (createEventDto.EventStatus is EventStatus.InGoing)
-        {
-            eventEntity.StartDatetime = new DateTime().ToUniversalTime();
-        }
-
+        
         await _eventRepository.Add(eventEntity);
+        var participants = new List<EventParticipant>
+        {
+            new EventParticipant
+            {
+                Id = new Guid(),
+                AccountId = organizerId,
+                EventId = eventEntity.Id,
+                InviteStatus = EventParticipantInviteStatus.Accepted,
+                RoleId = Roles.ORGANIZER
+            }
+        };
+
+        await _eventRepository.AddParticipants(eventEntity.Id, participants);
         return new NewEventDto
         {
             Id = eventEntity.Id,
@@ -129,14 +133,40 @@ public class EventServiceImpl : EventService
         };
     }
 
-    public override Guid PartiallyUpdateEvent(Guid eventId, UpdateEventDto updateEventDto)
+    public override async Task<Guid> PartiallyUpdateEvent(Guid eventId, UpdateEventDto updateEventDto)
     {
-        throw new NotImplementedException();
+        var eventEntity = await _eventRepository.GetById(eventId);
+        if (eventEntity.Status is EventStatus.IsOver)
+        {
+            throw new Exception("Event is over!"); // Потом кастомные добавим
+        }
+        
+        eventEntity.MeetingLink = updateEventDto.MeetingLink ?? eventEntity.MeetingLink;
+        if (eventEntity.Status is not EventStatus.InGoing)
+        {
+            eventEntity.Name = updateEventDto.Name ?? eventEntity.Name;
+            eventEntity.Description = updateEventDto.Description ?? eventEntity.Description;
+            eventEntity.MaxParticipant = updateEventDto.MaxParticipant ?? eventEntity.MaxParticipant;
+            eventEntity.StartDatetime = updateEventDto.StartDate ?? eventEntity.StartDatetime;
+            eventEntity.EndDatetime = updateEventDto.EndDate ?? eventEntity.EndDatetime;
+            eventEntity.Status = updateEventDto.EventStatus ?? eventEntity.Status;
+        
+            await _eventRepository.Update(eventEntity);
+            return eventEntity.Id;
+        }
+
+        if (updateEventDto.EventStatus is EventStatus.IsOver)
+        {
+            eventEntity.Status = EventStatus.IsOver;
+        }
+        
+        await _eventRepository.Update(eventEntity);
+        return eventEntity.Id;
     }
 
-    public override void DeleteEventById(Guid eventId)
+    public override async Task DeleteEventById(Guid eventId)
     {
-        throw new NotImplementedException();
+        await _eventRepository.DeleteById(eventId);
     }
 
     public override void UpdateParticipantStatus(Guid currentAccountId, UpdateParticipantStatusDto updateInvitationStatusDto)

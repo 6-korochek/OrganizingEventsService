@@ -27,9 +27,9 @@ public class EventParticipantToEfOrmAdapter(EventParticipantQuery query, Applica
             queryable = queryable.Where(model => Query.AccountIds.Contains(model.AccountId));
         }
 
-        if (Query.RoleNames.Any())
+        if (Query.RoleIds.Any())
         {
-            queryable = queryable.Where(model => Query.RoleNames.Contains(model.RoleIdNavigation.Name));
+            queryable = queryable.Where(model => Query.RoleIds.Contains(model.RoleId));
         }
 
         if (Query.InviteStatuses.Any())

@@ -18,6 +18,7 @@ public class CreateEventDto
     public string? MeetingLink { get; set; }
 
     public uint MaxParticipant { get; set; }
-
+    
+    // ТОЛЬКО InPlaned || InDraft
     public EventStatus EventStatus { get; set; }
 }

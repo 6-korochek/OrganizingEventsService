@@ -1,4 +1,4 @@
-namespace OrganizingEventsService.Presentation.Http.Requirements.Authentication;
+namespace OrganizingEventsService.Presentation.Http.Requirements.IsAuthenticated;
 
 public class AuthenticationRequirement : BaseRequirement
 {

@@ -4,7 +4,7 @@ using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.Models.Dto.Account;
 using OrganizingEventsService.Application.Models.Dto.Feedback;
 
-namespace OrganizingEventsService.Presentation.Http.Requirements.FeedbackAuthor;
+namespace OrganizingEventsService.Presentation.Http.Requirements.IsFeedbackAuthor;
 
 public class FeedbackAuthorRequirementHandler : AuthorizationHandler<FeedbackAuthorRequirement>
 {

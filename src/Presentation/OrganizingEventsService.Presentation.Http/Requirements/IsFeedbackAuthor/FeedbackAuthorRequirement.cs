@@ -1,4 +1,4 @@
-namespace OrganizingEventsService.Presentation.Http.Requirements.FeedbackAuthor;
+namespace OrganizingEventsService.Presentation.Http.Requirements.IsFeedbackAuthor;
 
 public class FeedbackAuthorRequirement : BaseRequirement
 {

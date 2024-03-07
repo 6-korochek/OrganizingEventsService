@@ -11,7 +11,7 @@ public class EventParticipantQuery
     
     public Collection<Guid> AccountIds { get; } = new();
     
-    public Collection<string> RoleNames { get; } = new();
+    public Collection<Guid> RoleIds { get; } = new();
     
     public Collection<EventParticipantInviteStatus> InviteStatuses { get; } = new();
     
@@ -43,9 +43,9 @@ public class EventParticipantQuery
         return this;
     }
 
-    public EventParticipantQuery WithRoleName(string roleName)
+    public EventParticipantQuery WithRoleId(Guid roleId)
     {
-        RoleNames.Add(roleName);
+        RoleIds.Add(roleId);
         return this;
     }
     

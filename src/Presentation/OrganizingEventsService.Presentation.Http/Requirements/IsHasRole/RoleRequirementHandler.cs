@@ -4,7 +4,7 @@ using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.Models.Dto.Account;
 using OrganizingEventsService.Application.Models.Dto.Participant;
 
-namespace OrganizingEventsService.Presentation.Http.Requirements.Role;
+namespace OrganizingEventsService.Presentation.Http.Requirements.IsHasRole;
 
 public class RoleRequirementHandler : AuthorizationHandler<RoleRequirement>
 {
@@ -27,7 +27,7 @@ public class RoleRequirementHandler : AuthorizationHandler<RoleRequirement>
         ParticipantDto participant = 
             _eventService.GetParticipantInEvent(currentAccount.Account.Id, eventId);
 
-        if (participant.Role.Name != requirement.RoleName)
+        if (participant.Role.Id != requirement.RoleId)
         {
             throw new ForbiddenException();
         }

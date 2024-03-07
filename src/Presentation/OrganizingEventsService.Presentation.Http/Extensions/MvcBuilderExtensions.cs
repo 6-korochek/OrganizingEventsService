@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using OrganizingEventsService.Application.ApplicationConstants;
 using OrganizingEventsService.Presentation.Http.Middlewares;
-using OrganizingEventsService.Presentation.Http.Requirements.Authentication;
-using OrganizingEventsService.Presentation.Http.Requirements.Role;
+using OrganizingEventsService.Presentation.Http.Requirements.IsAuthenticated;
+using OrganizingEventsService.Presentation.Http.Requirements.IsHasRole;
 
 namespace OrganizingEventsService.Presentation.Http.Extensions;
 
@@ -13,8 +14,8 @@ public static class MvcBuilderExtensions
         builder.Services.AddAuthorization(options =>
         {
             AuthenticationRequirement authenticationRequirement = new AuthenticationRequirement();
-            RoleRequirement isOrganizerRequirement = new RoleRequirement("Organizer");
-            RoleRequirement isParticipantRequirement = new RoleRequirement("Participant");
+            RoleRequirement isOrganizerRequirement = new RoleRequirement(Roles.ORGANIZER, "IsOrganizer");
+            RoleRequirement isParticipantRequirement = new RoleRequirement(Roles.PARTICIPANT,"IsParticipant");
             
             options.AddPolicy(authenticationRequirement.RequirementName,
                 policyBuilder => policyBuilder.Requirements.Add(authenticationRequirement));

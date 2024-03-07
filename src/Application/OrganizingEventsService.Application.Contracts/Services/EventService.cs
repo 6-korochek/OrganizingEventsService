@@ -24,9 +24,9 @@ public abstract class EventService
 
     public abstract Task<NewEventDto> CreateEvent(Guid organizerId, CreateEventDto createEventDto);
 
-    public abstract Guid PartiallyUpdateEvent(Guid eventId, UpdateEventDto updateEventDto);
+    public abstract Task<Guid> PartiallyUpdateEvent(Guid eventId, UpdateEventDto updateEventDto);
 
-    public abstract void DeleteEventById(Guid eventId);
+    public abstract Task DeleteEventById(Guid eventId);
 
     public abstract void UpdateParticipantStatus(
         Guid currentAccountId,

@@ -3,7 +3,7 @@ using OrganizingEventsService.Application.Abstractions.Exceptions;
 using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.Models.Dto.Account;
 
-namespace OrganizingEventsService.Presentation.Http.Requirements.Authentication;
+namespace OrganizingEventsService.Presentation.Http.Requirements.IsAuthenticated;
 
 public class AuthenticationRequirementHandler : AuthorizationHandler<AuthenticationRequirement>
 {
