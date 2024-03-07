@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
-using OrganizingEventsService.Application.Abstractions.Exceptions;
 using OrganizingEventsService.Application.Contracts.Services;
+using OrganizingEventsService.Application.Exceptions;
 using OrganizingEventsService.Application.Models.Dto.Account;
 using OrganizingEventsService.Application.Models.Dto.Feedback;
 

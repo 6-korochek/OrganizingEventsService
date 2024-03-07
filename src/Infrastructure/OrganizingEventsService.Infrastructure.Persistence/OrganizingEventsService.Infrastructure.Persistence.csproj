@@ -2,6 +2,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Application\OrganizingEventsService.Application.Abstractions\OrganizingEventsService.Application.Abstractions.csproj"/>
+        <ProjectReference Include="..\..\Application\OrganizingEventsService.Application\OrganizingEventsService.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>

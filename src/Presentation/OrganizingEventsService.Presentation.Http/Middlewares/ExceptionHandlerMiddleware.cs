@@ -1,4 +1,4 @@
-using OrganizingEventsService.Application.Abstractions.Exceptions;
+using OrganizingEventsService.Application.Exceptions;
 
 namespace OrganizingEventsService.Presentation.Http.Middlewares;
 
@@ -21,8 +21,11 @@ public class ExceptionHandlerMiddleware : IMiddleware
         httpContext.Response.ContentType = "application/json";
         httpContext.Response.StatusCode = exception switch
         {
+            BadRequestException => StatusCodes.Status400BadRequest,
             UnauthorizedException => StatusCodes.Status401Unauthorized,
             ForbiddenException => StatusCodes.Status403Forbidden,
+            NotFoundException => StatusCodes.Status404NotFound,
+            ConflictException => StatusCodes.Status409Conflict,
             _ => StatusCodes.Status500InternalServerError
         };
 
