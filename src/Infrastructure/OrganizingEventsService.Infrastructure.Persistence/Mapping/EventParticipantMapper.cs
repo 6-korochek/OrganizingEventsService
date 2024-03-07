@@ -16,7 +16,12 @@ public static class EventParticipantMapper
             IsArchive = eventParticipantModel.IsArchive,
             IsBanned = eventParticipantModel.IsBanned,
             InviteStatus = (EventParticipantInviteStatus)eventParticipantModel.InviteStatus,
-            RoleId = eventParticipantModel.RoleId
+            RoleId = eventParticipantModel.RoleId,
+            RoleIdNavigation = new Role
+            {
+                Id = eventParticipantModel.RoleIdNavigation.Id,
+                Name = eventParticipantModel.RoleIdNavigation.Name
+            }
         };
     }
 
@@ -30,7 +35,12 @@ public static class EventParticipantMapper
             IsArchive = eventParticipant.IsArchive,
             IsBanned = eventParticipant.IsBanned,
             InviteStatus = (Models.Enums.EventParticipantInviteStatus)eventParticipant.InviteStatus,
-            RoleId = eventParticipant.RoleId
+            RoleId = eventParticipant.RoleId,
+            RoleIdNavigation = new RoleModel
+            {
+                Id = eventParticipant.RoleIdNavigation.Id,
+                Name = eventParticipant.RoleIdNavigation.Name
+            }
         };
     }
 }

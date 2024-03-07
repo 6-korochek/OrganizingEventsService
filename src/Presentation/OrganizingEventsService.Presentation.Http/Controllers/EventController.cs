@@ -4,11 +4,13 @@ using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.Models.Dto.Account;
 using OrganizingEventsService.Application.Models.Dto.Common;
 using OrganizingEventsService.Application.Models.Dto.Event;
+using OrganizingEventsService.Application.Models.Dto.Feedback;
 using OrganizingEventsService.Application.Models.Dto.Participant;
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
 namespace OrganizingEventsService.Presentation.Http.Controllers;
 
+[Authorize("IsAuthenticated")]
 [Route("[controller]")]
 public class EventController : ControllerBase
 {
@@ -19,26 +21,25 @@ public class EventController : ControllerBase
         _eventService = eventService;
     }
     
-    [Authorize("IsAuthenticated")]
+    // ???????????????????????????????????????????????
     [HttpGet]
-    public ActionResult<EventDto> Get(
+    public async Task<ActionResult<EventDto>> Get(
         [FromQuery(Name = "event_id")] Guid? eventId,
         [FromQuery(Name = "invite_code")] string? inviteCode)
     {
-        EventDto response = _eventService.GetEventInfo(eventId, inviteCode);
+        EventDto response = await _eventService.GetEventInfo(eventId, inviteCode);
         return response;
     }
     
-    [Authorize("IsAuthenticated")]
     [HttpPost]
-    public ActionResult<NewEventDto> Create([FromBody] CreateEventDto createEventDto)
+    public async Task<ActionResult<NewEventDto>> Create([FromBody] CreateEventDto createEventDto)
     {
         var currentAccount = HttpContext.Items["CurrentAccount"] as AuthenticatedAccountDto;
-        NewEventDto response = _eventService.CreateEvent(currentAccount!.Account.Id, createEventDto);
+        NewEventDto response = await _eventService.CreateEvent(currentAccount!.Account.Id, createEventDto);
         return response;
     }
     
-    // Only Organizers
+    [Authorize("IsOrganizer")]
     [HttpPatch("{id}")]
     public ActionResult<Guid> PartiallyUpdate(Guid id,[FromBody] UpdateEventDto updateEventDto)
     {
@@ -46,7 +47,6 @@ public class EventController : ControllerBase
         return response;
     }
     
-    [Authorize("IsAuthenticated")]
     [Authorize("IsOrganizer")]
     [HttpDelete("{id}")]
     public void Delete(Guid id)
@@ -54,29 +54,30 @@ public class EventController : ControllerBase
         _eventService.DeleteEventById(id);
     }
     
-    [Authorize("IsAuthenticated")]
     [HttpGet("/my")]
-    public IEnumerable<EventDto> GetMy(
+    public IAsyncEnumerable<EventDto> GetMy(
         [FromQuery(Name = "event_status")] EventStatus status,
-        [FromQuery(Name = "limit")] uint? limit,
-        [FromQuery(Name = "offset")] uint? offset,
-        AuthenticatedAccountDto authenticatedAccountDto)
+        [FromQuery(Name = "limit")] ushort? limit = null,
+        [FromQuery(Name = "offset")] ushort? offset = null)
     {
-        PaginationDto paginationDto = new PaginationDto
-        {
-            Limit = limit,
-            Offset = offset
-        };
-
-        IEnumerable<EventDto> response = _eventService.GetEventsWhereAccountIsParticipant(
-            authenticatedAccountDto.Account.Id, 
-            status, 
+        PaginationDto? paginationDto = limit != null
+            ? new PaginationDto
+            {
+                Limit = (ushort)limit,
+                Offset = offset ?? 0
+            }
+            : null;
+        
+        var currentAccount = HttpContext.Items["CurrentAccount"] as AuthenticatedAccountDto;
+        IAsyncEnumerable<EventDto> response = _eventService.GetEventsWhereAccountIsParticipant(
+            currentAccount!.Account.Id,
+            status,
             paginationDto);
 
         return response;
     }
     
-    // Only Organizers
+    [Authorize("IsOrganizer")]
     [HttpGet("{id}/members")]
     public IEnumerable<ParticipantDto> GetMembers(Guid id)
     {
@@ -84,7 +85,7 @@ public class EventController : ControllerBase
         return response;
     }
     
-    // Only Organizers
+    [Authorize("IsOrganizer")]
     [HttpPost("{id}/members")]
     public void CreateMembers(Guid id, [FromBody] IEnumerable<CreateParticipantDto> createParticipantDtoList)
     {
@@ -92,39 +93,57 @@ public class EventController : ControllerBase
         _eventService.CreateParticipants(id, participantList);
     }
     
-    // Only Organizers
+    [Authorize("IsOrganizer")]
     [HttpDelete("{id}/members")]
     public void DeleteMembers(Guid id, [FromBody] IEnumerable<string> accountEmails)
     {
         _eventService.DeleteParticipantsByEmails(accountEmails);
     }
     
-    // ?????????????????????????????????????????????????????
-    // Only Organizers
+    [Authorize("IsOrganizer")]
     [HttpGet($"{{id}}/members/{{accountId}}")]
-    public ActionResult<ParticipantDto> GetMember(Guid accountId)
+    public ActionResult<ParticipantDto> GetMember(Guid id, Guid accountId)
     {
-        var response = _eventService.GetParticipantByAccountId(accountId);
+        var response = _eventService.GetParticipantInEvent(id, accountId);
         return response;
     }
     
-    // ?????????????????????????????????????????????????????
-    // Only Organizers
+    [Authorize("IsOrganizer")]
     [HttpPatch($"{{id}}/members/{{accountId}}")]
-    public ActionResult<ParticipantDto> PartiallyUpdateMember(Guid accountId, [FromBody] UpdateParticipantDto updateParticipantDto)
+    public ActionResult<ParticipantDto> PartiallyUpdateMember(Guid id, Guid accountId, [FromBody] UpdateParticipantDto updateParticipantDto)
     {
-        var response = _eventService.PartiallyUpdateParticipant(accountId, updateParticipantDto);
+        var response = _eventService.PartiallyUpdateParticipant(id, accountId, updateParticipantDto);
         return response;
     }
     
-    // ?????????????????????????????????????????????????????
-    // Only Organizers
+    [Authorize("IsOrganizer")]
     [HttpDelete($"{{id}}/members/{{accountId}}")]
     public void DeleteMember(Guid accountId)
     {
         _eventService.DeleteParticipantByAccountId(accountId);
     }
     
-    // Feedbacks
-    ///////////////////////////////
+    [HttpGet("{id}/feedbacks")]
+    public IEnumerable<FeedbackDto> GetFeedbacks(Guid id)
+    {
+        IEnumerable<FeedbackDto> response = _eventService.GetFeedbacksByEventId(id);
+        return response;
+    }
+    
+    [Authorize("IsParticipant")]
+    [HttpPost("{id}/feedbacks")]
+    public ActionResult<Guid> CreateFeedback(Guid id, CreateFeedbackDto createFeedbackDto)
+    {
+        Guid response = _eventService.CreateFeedback(id, createFeedbackDto);
+        return response;
+    }
+    
+    [Authorize("IsParticipant")]
+    [Authorize("IsFeedbackAuthor")]
+    [HttpPatch("{id}/feedbacks")]
+    public ActionResult<FeedbackDto> PartiallyUpdateFeedback(Guid id, UpdateFeedbackDto updateFeedbackDto)
+    {
+        FeedbackDto response = _eventService.PartiallyUpdateFeedback(id, updateFeedbackDto);
+        return response;
+    }
 }

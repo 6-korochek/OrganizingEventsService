@@ -22,9 +22,14 @@ public class EventQueryToEfOrmAdapter(EventQuery query, ApplicationDbContext dbC
             queryable = queryable.Where(model => Query.Statuses.Contains((EventStatus)model.Status));
         }
 
-        if (Query.IncludeParticipants)
+        if (Query.AccountParticipantIds.Any())
         {
-            queryable = queryable.Include(model => model.EventParticipants);
+            queryable = queryable
+                .Where(model =>
+                    model.EventParticipants
+                        .Select(p => p.AccountId)
+                        .Any(p => Query.AccountParticipantIds.Contains(p)
+                        ));
         }
 
         if (Query.Offset is not null)
@@ -35,6 +40,11 @@ public class EventQueryToEfOrmAdapter(EventQuery query, ApplicationDbContext dbC
         if (Query.Limit is not null)
         {
             queryable = queryable.Take((int)Query.Limit);
+        }
+        
+        if (Query.IncludeParticipants)
+        {
+            queryable = queryable.Include(model => model.EventParticipants);
         }
 
         return queryable;

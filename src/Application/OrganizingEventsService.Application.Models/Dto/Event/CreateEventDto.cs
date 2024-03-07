@@ -7,7 +7,7 @@ namespace OrganizingEventsService.Application.Models.Dto.Event;
 
 public class CreateEventDto
 {
-    public string? Title { get; set; }
+    public string Name { get; set; } = null!;
 
     public DateTime StartDate { get; set; }
 

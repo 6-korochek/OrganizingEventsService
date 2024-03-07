@@ -11,7 +11,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Repositories;
 
 public class EventRepository : BaseRepository<Event, EventModel>, IEventRepository
 {
-    public EventRepository(ApplicationDbContext dbContext) : base(dbContext, dbContext.Events) { }
+    public EventRepository(ApplicationDbContext dbContext) : base(dbContext, dbContext.Events) {}
 
     public IAsyncEnumerable<Event> GetListByQuery(EventQuery query)
     {
@@ -22,7 +22,9 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
     public IAsyncEnumerable<EventParticipant> GetParticipantListByQuery(EventParticipantQuery query)
     {
         var queryAdapter = new EventParticipantToEfOrmAdapter(query, DbContext);
-        return queryAdapter.Adapt().AsAsyncEnumerable().Select(EventParticipantMapper.ToEntity);
+        return queryAdapter.Adapt()
+            .AsAsyncEnumerable()
+            .Select(EventParticipantMapper.ToEntity);
     }
 
     public async Task<Event> GetEventByInviteCode(string inviteCode)
@@ -36,13 +38,13 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
         return MapToEntity(model);
     }
 
-    public IAsyncEnumerable<EventParticipant> GetParticipantListByEventId(
+    public async Task<EventParticipant> GetParticipantInEvent(
+        Guid accountId, 
         Guid eventId,
         bool includeRole = false,
         bool includeAccount = false)
     {
-        IQueryable<EventParticipantModel> queryable =
-            DbContext.EventParticipants.Where(model => model.EventId == eventId);
+        IQueryable<EventParticipantModel> queryable = DbContext.EventParticipants;
         if (includeRole)
         {
             queryable = queryable.Include(model => model.RoleIdNavigation);
@@ -53,16 +55,23 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
             queryable = queryable.Include(model => model.AccountIdNavigation);
         }
 
-        return queryable.AsAsyncEnumerable().Select(EventParticipantMapper.ToEntity);
+        EventParticipantModel? model =
+            await queryable.FirstOrDefaultAsync(model => model.AccountId == accountId && model.EventId == eventId);
+
+        if (model is null)
+        {
+            throw new Exception(); // Потом кастомные добавим 
+        }
+
+        return EventParticipantMapper.ToEntity(model);
     }
 
-    public async Task<EventParticipant> GetParticipantInEvent(Guid accountId, Guid eventId)
+    public async Task<EventParticipant> GetParticipantByRoleName(Guid eventId, string roleName)
     {
-        EventParticipantModel? model = await DbContext.EventParticipants
-            .Include(model => model.RoleIdNavigation)
-            .Include(model => model.AccountIdNavigation)
-            .FirstOrDefaultAsync(model => model.AccountId == accountId && model.EventId == eventId);
-
+        EventParticipantModel? model =
+            await DbContext.EventParticipants.FirstOrDefaultAsync(model =>
+                model.EventId == eventId && model.EventIdNavigation.Name == roleName);
+        
         if (model is null)
         {
             throw new Exception(); // Потом кастомные добавим 
@@ -94,21 +103,6 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
     public async Task DeleteParticipant(EventParticipant eventParticipant)
     {
         await DbContext.EventParticipants.Where(model => model.Id == eventParticipant.Id).ExecuteDeleteAsync();
-    }
-
-    public IAsyncEnumerable<Feedback> GetFeedbackListByEventId(Guid eventId, bool includeAuthor = false)
-    {
-        IQueryable<FeedbackModel> queryable =
-            DbContext.Feedbacks.Where(model => model.EventParticipantIdNavigation.EventId == eventId);
-
-        if (includeAuthor)
-        {
-            queryable
-                .Include(model => model.EventParticipantIdNavigation)
-                .Include(model => model.EventParticipantIdNavigation.AccountIdNavigation);
-        }
-
-        return queryable.AsAsyncEnumerable().Select(FeedbackMapper.ToEntity);
     }
 
     protected override Event MapToEntity(EventModel model)

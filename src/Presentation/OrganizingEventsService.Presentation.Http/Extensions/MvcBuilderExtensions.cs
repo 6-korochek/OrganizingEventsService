@@ -13,13 +13,17 @@ public static class MvcBuilderExtensions
         builder.Services.AddAuthorization(options =>
         {
             AuthenticationRequirement authenticationRequirement = new AuthenticationRequirement();
-            RoleRequirement roleRequirement = new RoleRequirement("Organizer");
+            RoleRequirement isOrganizerRequirement = new RoleRequirement("Organizer");
+            RoleRequirement isParticipantRequirement = new RoleRequirement("Participant");
             
             options.AddPolicy(authenticationRequirement.RequirementName,
                 policyBuilder => policyBuilder.Requirements.Add(authenticationRequirement));
             
-            options.AddPolicy(roleRequirement.RequirementName,
-                policyBuilder => policyBuilder.Requirements.Add(roleRequirement));
+            options.AddPolicy(isOrganizerRequirement.RequirementName,
+                policyBuilder => policyBuilder.Requirements.Add(isOrganizerRequirement));
+            
+            options.AddPolicy(isParticipantRequirement.RequirementName,
+                policyBuilder => policyBuilder.Requirements.Add(isParticipantRequirement));
         });
 
         builder.Services.AddSingleton<IAuthorizationHandler, AuthenticationRequirementHandler>();

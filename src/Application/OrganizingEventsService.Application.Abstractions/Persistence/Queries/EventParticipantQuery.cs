@@ -11,13 +11,19 @@ public class EventParticipantQuery
     
     public Collection<Guid> AccountIds { get; } = new();
     
+    public Collection<string> RoleNames { get; } = new();
+    
     public Collection<EventParticipantInviteStatus> InviteStatuses { get; } = new();
     
-    public bool IsBanned;
+    public bool IsBanned { get; private set; }
     
-    public ushort? Limit;
+    public ushort? Limit { get; private set; }
     
-    public ushort? Offset;
+    public ushort? Offset { get; private set; }
+    
+    public bool IncludeAccount { get; private set; }
+    
+    public bool IncludeRole { get; private set; }
     
     public EventParticipantQuery WithId(Guid id)
     {
@@ -34,6 +40,12 @@ public class EventParticipantQuery
     public EventParticipantQuery WithAccountId(Guid id)
     {
         AccountIds.Add(id);
+        return this;
+    }
+
+    public EventParticipantQuery WithRoleName(string roleName)
+    {
+        RoleNames.Add(roleName);
         return this;
     }
     
@@ -58,6 +70,18 @@ public class EventParticipantQuery
     public EventParticipantQuery WithOffset(ushort offset)
     {
         Offset = offset;
+        return this;
+    }
+
+    public EventParticipantQuery WithAccount(bool includeAccount = true)
+    {
+        IncludeAccount = includeAccount;
+        return this;
+    }
+
+    public EventParticipantQuery WithRole(bool includeRole = true)
+    {
+        IncludeRole = includeRole;
         return this;
     }
 }
