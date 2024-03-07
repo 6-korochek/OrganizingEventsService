@@ -79,9 +79,9 @@ public class EventController : ControllerBase
     
     [Authorize("IsOrganizer")]
     [HttpGet("{id}/members")]
-    public IEnumerable<ParticipantDto> GetMembers(Guid id)
+    public IAsyncEnumerable<ParticipantDto> GetMembers(Guid id)
     {
-        IEnumerable<ParticipantDto> response = _eventService.GetParticipants(id);
+        IAsyncEnumerable<ParticipantDto> response = _eventService.GetParticipants(id);
         return response;
     }
     
@@ -105,7 +105,7 @@ public class EventController : ControllerBase
     public ActionResult<ParticipantDto> GetMember(Guid id, Guid accountId)
     {
         var response = _eventService.GetParticipantInEvent(id, accountId);
-        return response;
+        return response.Result;
     }
     
     [Authorize("IsOrganizer")]
@@ -113,7 +113,7 @@ public class EventController : ControllerBase
     public ActionResult<ParticipantDto> PartiallyUpdateMember(Guid id, Guid accountId, [FromBody] UpdateParticipantDto updateParticipantDto)
     {
         var response = _eventService.PartiallyUpdateParticipant(id, accountId, updateParticipantDto);
-        return response;
+        return response.Result;
     }
     
     [Authorize("IsOrganizer")]

@@ -12,7 +12,7 @@ public partial class EventParticipant
 
     public EventParticipantInviteStatus InviteStatus { get; set; }
 
-    public bool? IsBanned { get; set; }
+    public bool IsBanned { get; set; }
 
     public bool? IsArchive { get; set; }
 

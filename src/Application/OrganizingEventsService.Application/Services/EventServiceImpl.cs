@@ -2,10 +2,12 @@ using OrganizingEventsService.Application.Abstractions.Persistence.Queries;
 using OrganizingEventsService.Application.Abstractions.Persistence.Repositories;
 using OrganizingEventsService.Application.ApplicationConstants;
 using OrganizingEventsService.Application.Contracts.Services;
+using OrganizingEventsService.Application.Exceptions;
 using OrganizingEventsService.Application.Models.Dto.Common;
 using OrganizingEventsService.Application.Models.Dto.Event;
 using OrganizingEventsService.Application.Models.Dto.Feedback;
 using OrganizingEventsService.Application.Models.Dto.Participant;
+using OrganizingEventsService.Application.Models.Dto.Role;
 using OrganizingEventsService.Application.Models.Entities;
 using OrganizingEventsService.Application.Models.Entities.Enums;
 using System.Security.Cryptography;
@@ -169,29 +171,104 @@ public class EventServiceImpl : EventService
         await _eventRepository.DeleteById(eventId);
     }
 
-    public override void UpdateParticipantStatus(Guid currentAccountId, UpdateParticipantStatusDto updateInvitationStatusDto)
+    public override IAsyncEnumerable<ParticipantDto> GetParticipants(Guid eventId)
     {
-        throw new NotImplementedException();
+        var eventEntity = _eventRepository.GetById(eventId);
+        var query = new EventParticipantQuery().WithEventId(eventEntity.Result.Id).WithAccount().WithRole();
+        var eventParticipantEntities = _eventRepository.GetParticipantListByQuery(query);
+        var participants = from e in eventParticipantEntities
+                           select new ParticipantDto()
+                           {
+                               AccountId = e.AccountId,
+                               AccountName = e.AccountIdNavigation.Name,
+                               AccountSurName = e.AccountIdNavigation.Surname,
+                               Role = new RoleDto()
+                               {
+                                   Id = e.RoleId,
+                                   Name = e.RoleIdNavigation.Name
+                               },
+                               Status = e.InviteStatus
+                           };
+        return participants;
     }
 
-    public override IEnumerable<ParticipantDto> GetParticipants(Guid eventId)
+    public override async Task<ParticipantDto> GetParticipantInEvent(Guid eventId, Guid accountId)
     {
-        throw new NotImplementedException();
+        var participantEntity = await _eventRepository.GetParticipantInEvent(accountId, eventId, true, true);
+        var participantDto = new ParticipantDto()
+        {
+            AccountId = participantEntity.AccountId,
+            AccountName = participantEntity.AccountIdNavigation.Name,
+            AccountSurName = participantEntity.AccountIdNavigation.Surname,
+            Role = new RoleDto()
+            {
+                Id = participantEntity.RoleId,
+                Name = participantEntity.RoleIdNavigation.Name
+            }
+        };
+        return participantDto;
     }
 
-    public override ParticipantDto GetParticipantInEvent(Guid eventId, Guid accountId)
+    public override async void CreateParticipants(
+        Guid eventId,
+        IEnumerable<CreateParticipantDto> createParticipantDtoList)
     {
-        throw new NotImplementedException();
+        var eventEntity = await _eventRepository.GetById(eventId);
+
+        var accountEmails = from dto in createParticipantDtoList select dto.AccountEmail;
+        var existingAccountDtoList = AccountService.GetExistingAccountsByEmail(accountEmails);
+
+        if (!existingAccountDtoList.Any())
+        {
+            return;
+        }
+
+        var newEventParticipants = from createParticipantDto in createParticipantDtoList
+                                   where existingAccountDtoList.Select(acc => acc.Email)
+                                       .Contains(createParticipantDto.AccountEmail)
+                                   let account = existingAccountDtoList.First(c =>
+                                       c.Email == createParticipantDto.AccountEmail)
+                                   select new EventParticipant()
+                                   {
+                                       Id = new Guid(),
+                                       EventId = eventId,
+                                       AccountId = account.Id,
+                                       InviteStatus = EventParticipantInviteStatus.Pending,
+                                       RoleId = createParticipantDto.RoleId
+                                   };
+        await _eventRepository.AddParticipants(eventEntity.Id, newEventParticipants);
     }
 
-    public override void CreateParticipants(Guid eventId, IEnumerable<CreateParticipantDto> createParticipantDtoList)
+    public override async Task<ParticipantDto> PartiallyUpdateParticipant(
+        Guid eventId,
+        Guid accountId,
+        UpdateParticipantDto updateParticipantDto)
     {
-        throw new NotImplementedException();
-    }
+        var participantEntity = await _eventRepository.GetParticipantInEvent(accountId, eventId, true, true);
 
-    public override ParticipantDto PartiallyUpdateParticipant(Guid eventId, Guid accountId, UpdateParticipantDto updateParticipantDto)
-    {
-        throw new NotImplementedException();
+        if (participantEntity.IsBanned)
+        {
+            throw new ConflictException("Cannot update banned user.");
+        }
+        
+        if (participantEntity.InviteStatus == EventParticipantInviteStatus.Pending)
+        {
+            participantEntity.InviteStatus = updateParticipantDto.InviteStatus ?? participantEntity.InviteStatus;
+        }
+
+        participantEntity.IsBanned = updateParticipantDto.IsBanned ?? participantEntity.IsBanned;
+        participantEntity.RoleId = updateParticipantDto.RoleId ?? participantEntity.RoleId;
+        
+        await _eventRepository.UpdateParticipant(participantEntity);
+
+        return new ParticipantDto()
+        {
+            AccountId = participantEntity.AccountId,
+            AccountName = participantEntity.AccountIdNavigation.Name,
+            AccountSurName = participantEntity.AccountIdNavigation.Surname,
+            Role = new RoleDto() { Id = participantEntity.RoleId, Name = participantEntity.RoleIdNavigation.Name },
+            Status = participantEntity.InviteStatus
+        };
     }
 
     public override void DeleteParticipantsByEmails(IEnumerable<string> accountEmails)

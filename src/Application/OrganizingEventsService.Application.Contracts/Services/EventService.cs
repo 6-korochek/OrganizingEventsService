@@ -28,17 +28,13 @@ public abstract class EventService
 
     public abstract Task DeleteEventById(Guid eventId);
 
-    public abstract void UpdateParticipantStatus(
-        Guid currentAccountId,
-        UpdateParticipantStatusDto updateInvitationStatusDto);
+    public abstract IAsyncEnumerable<ParticipantDto> GetParticipants(Guid eventId);
 
-    public abstract IEnumerable<ParticipantDto> GetParticipants(Guid eventId);
-
-    public abstract ParticipantDto GetParticipantInEvent(Guid eventId, Guid accountId);
+    public abstract Task<ParticipantDto> GetParticipantInEvent(Guid eventId, Guid accountId);
 
     public abstract void CreateParticipants(Guid eventId, IEnumerable<CreateParticipantDto> createParticipantDtoList);
 
-    public abstract ParticipantDto PartiallyUpdateParticipant(
+    public abstract Task<ParticipantDto> PartiallyUpdateParticipant(
         Guid eventId,
         Guid accountId,
         UpdateParticipantDto updateParticipantDto);
