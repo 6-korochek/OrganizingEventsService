@@ -9,9 +9,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection collection)
     {
         collection.AddScoped<IAccountService, FakeAccountService>();
-        collection.AddScoped<EventService, FakeEventService>();
         collection.AddScoped<AuthService, AuthServiceImpl>();
-        
+        collection.AddScoped<EventService, EventServiceImpl>();
         return collection;
     }
 }

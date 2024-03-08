@@ -13,5 +13,5 @@ public class ParticipantDto
 
     public EventParticipantInviteStatus Status { get; set; }
 
-    public RoleDto? Role { get; set; }
+    public RoleDto Role { get; set; } = null!;
 }

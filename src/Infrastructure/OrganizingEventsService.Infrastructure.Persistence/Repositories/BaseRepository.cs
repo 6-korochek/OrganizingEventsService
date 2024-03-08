@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OrganizingEventsService.Application.Abstractions.Persistence.Repositories;
+using OrganizingEventsService.Application.Exceptions;
 using OrganizingEventsService.Application.Models.Entities;
 using OrganizingEventsService.Infrastructure.Persistence.Contexts;
 
@@ -18,7 +19,7 @@ public abstract class BaseRepository<TEntity, TModel>
         TModel? model = await DbSet.FirstOrDefaultAsync(model => model.Id == id);
         if (model == null)
         {
-            throw new Exception(); // Потом кастомные добавим
+            throw new NotFoundException(); // Потом кастомные добавим
         }
 
         return MapToEntity(model);

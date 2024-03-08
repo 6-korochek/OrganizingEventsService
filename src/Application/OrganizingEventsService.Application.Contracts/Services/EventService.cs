@@ -15,36 +15,35 @@ public abstract class EventService
         AccountService = accountService;
     }
 
-    public abstract EventDto GetEventInfo(Guid? eventId, string? inviteCode);
+    public abstract Task<EventDto> GetEventInfo(Guid? eventId, string? inviteCode);
 
-    public abstract IEnumerable<EventDto> GetEventsWhereAccountIsParticipant(
+    public abstract IAsyncEnumerable<EventDto> GetEventsWhereAccountIsParticipant(
         Guid accountId,
         EventStatus status,
-        PaginationDto paginationDto);
+        PaginationDto? paginationDto);
 
-    public abstract NewEventDto CreateEvent(Guid organizerId, CreateEventDto createEventDto);
+    public abstract Task<NewEventDto> CreateEvent(Guid organizerId, CreateEventDto createEventDto);
 
-    public abstract Guid PartiallyUpdateEvent(Guid eventId, UpdateEventDto updateEventDto);
+    public abstract Task<Guid> PartiallyUpdateEvent(Guid eventId, UpdateEventDto updateEventDto);
 
-    public abstract void DeleteEventById(Guid eventId);
+    public abstract Task DeleteEventById(Guid eventId);
 
-    public abstract void UpdateParticipantStatus(
-        Guid currentAccountId,
-        UpdateParticipantStatusDto updateInvitationStatusDto);
+    public abstract IAsyncEnumerable<ParticipantDto> GetParticipants(Guid eventId);
 
-    public abstract IEnumerable<ParticipantDto> GetParticipants(Guid eventId);
-
-    public abstract ParticipantDto GetParticipantByAccountId(Guid accountId);
+    public abstract Task<ParticipantDto> GetParticipantInEvent(Guid eventId, Guid accountId);
 
     public abstract void CreateParticipants(Guid eventId, IEnumerable<CreateParticipantDto> createParticipantDtoList);
 
-    public abstract ParticipantDto PartiallyUpdateParticipant(
+    public abstract Task<ParticipantDto> PartiallyUpdateParticipant(
+        Guid eventId,
         Guid accountId,
         UpdateParticipantDto updateParticipantDto);
 
     public abstract void DeleteParticipantsByEmails(IEnumerable<string> accountEmails);
 
     public abstract void DeleteParticipantByAccountId(Guid accountId);
+
+    public abstract FeedbackDto GetFeedbackInfo(Guid feedbackId);
 
     public abstract IEnumerable<FeedbackDto> GetFeedbacksByEventId(Guid eventId);
 

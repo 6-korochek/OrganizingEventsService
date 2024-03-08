@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.Models.Dto.Account;
 
 namespace OrganizingEventsService.Presentation.Http.Controllers;
 
+[Authorize("IsAuthenticated")]
 [Route("[controller]")]
 public class AccountController : ControllerBase
 {
@@ -14,18 +16,18 @@ public class AccountController : ControllerBase
         _accountService = accountService;
     }
     
-    // Only Admin
-    [HttpGet("{id}")]
-    public ActionResult<AccountDto> Get(Guid id)
+    [Authorize("IsAdmin")]
+    [HttpGet("{accountId}")]
+    public ActionResult<AccountDto> Get(Guid accountId)
     {
-        AccountDto account = _accountService.GetAccountById(id);
+        AccountDto account = _accountService.GetAccountById(accountId);
         return account;
     }
     
-    // Only Admin
-    [HttpDelete("{id}")]
-    public void Delete(Guid id)
+    [Authorize("IsAdmin")]
+    [HttpDelete("{accountId}")]
+    public void Delete(Guid accountId)
     {
-        _accountService.DeleteAccountById(id);
+        _accountService.DeleteAccountById(accountId);
     }
 }

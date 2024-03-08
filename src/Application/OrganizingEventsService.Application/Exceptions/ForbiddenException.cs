@@ -1,4 +1,4 @@
-namespace OrganizingEventsService.Application.Abstractions.Exceptions;
+namespace OrganizingEventsService.Application.Exceptions;
 
 public class ForbiddenException : Exception
 {

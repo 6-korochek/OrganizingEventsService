@@ -8,6 +8,8 @@ public interface IAccountService
 
     AccountDto GetAccountByEmail(string email);
 
+    IEnumerable<AccountDto> GetExistingAccountsByEmail(IEnumerable<string> emails);
+
     AccountDto UpdateAccount(Guid accountId, UpdateAccountDto updateAccountDto);
 
     void DeleteAccountById(Guid accountId);

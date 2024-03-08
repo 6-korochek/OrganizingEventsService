@@ -27,6 +27,11 @@ public class EventParticipantToEfOrmAdapter(EventParticipantQuery query, Applica
             queryable = queryable.Where(model => Query.AccountIds.Contains(model.AccountId));
         }
 
+        if (Query.RoleIds.Any())
+        {
+            queryable = queryable.Where(model => Query.RoleIds.Contains(model.RoleId));
+        }
+
         if (Query.InviteStatuses.Any())
         {
             queryable = queryable.Where(model =>
@@ -46,6 +51,16 @@ public class EventParticipantToEfOrmAdapter(EventParticipantQuery query, Applica
         if (Query.Limit is not null)
         {
             queryable = queryable.Take((int)Query.Limit);
+        }
+        
+        if (Query.IncludeAccount)
+        {
+            queryable = queryable.Include(model => model.AccountIdNavigation);
+        }
+
+        if (Query.IncludeRole)
+        {
+            queryable = queryable.Include(model => model.RoleIdNavigation);
         }
 
         return queryable;
