@@ -92,14 +92,13 @@ public class EventServiceImpl : EventService
             });
 
         return events;
-
     }
 
     public override async Task<NewEventDto> CreateEvent(Guid organizerId, CreateEventDto createEventDto)
     {
         var eventEntity = new Event
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Name = createEventDto.Name,
             Description = createEventDto.Description,
             MeetingLink = createEventDto.MeetingLink,
@@ -112,7 +111,7 @@ public class EventServiceImpl : EventService
 
         var organizer = new EventParticipant
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             AccountId = organizerId,
             EventId = eventEntity.Id,
             InviteStatus = EventParticipantInviteStatus.Accepted,
@@ -228,7 +227,7 @@ public class EventServiceImpl : EventService
                 c.Email == createParticipantDto.AccountEmail)
             select new EventParticipant()
             {
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 EventId = eventId,
                 AccountId = account.Id,
                 InviteStatus = EventParticipantInviteStatus.Pending,
@@ -310,7 +309,7 @@ public class EventServiceImpl : EventService
         StringBuilder stringBuilder = new StringBuilder();
         using (var hash = SHA256.Create())
         {
-            byte[] result = hash.ComputeHash(Encoding.UTF8.GetBytes(new Guid().ToString()));
+            byte[] result = hash.ComputeHash(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
             foreach (byte b in result)
                 stringBuilder.Append(b.ToString("x2"));
         }

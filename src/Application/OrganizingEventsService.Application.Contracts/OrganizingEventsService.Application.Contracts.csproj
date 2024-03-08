@@ -2,7 +2,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\OrganizingEventsService.Application.Models\OrganizingEventsService.Application.Models.csproj"/>
-
+        <PackageReference Include="Microsoft.Extensions.Options" />
+        
 
 
     </ItemGroup>

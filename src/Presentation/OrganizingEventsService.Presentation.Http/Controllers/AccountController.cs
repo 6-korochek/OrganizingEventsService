@@ -6,7 +6,8 @@ using OrganizingEventsService.Application.Models.Dto.Account;
 namespace OrganizingEventsService.Presentation.Http.Controllers;
 
 [Authorize("IsAuthenticated")]
-[Route("[controller]")]
+[Authorize("IsAdmin")]
+[Route("[controller]/{accountId}")]
 public class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
@@ -16,16 +17,14 @@ public class AccountController : ControllerBase
         _accountService = accountService;
     }
     
-    [Authorize("IsAdmin")]
-    [HttpGet("{accountId}")]
+    [HttpGet]
     public ActionResult<AccountDto> Get(Guid accountId)
     {
         AccountDto account = _accountService.GetAccountById(accountId);
         return account;
     }
     
-    [Authorize("IsAdmin")]
-    [HttpDelete("{accountId}")]
+    [HttpDelete]
     public void Delete(Guid accountId)
     {
         _accountService.DeleteAccountById(accountId);

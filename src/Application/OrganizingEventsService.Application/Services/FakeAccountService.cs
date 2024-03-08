@@ -9,7 +9,7 @@ public class FakeAccountService : IAccountService
     {
         return new AccountDto
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Email = "Фиг вам",
             Name = "Andrey",
             Surname = "Hard",
@@ -21,7 +21,7 @@ public class FakeAccountService : IAccountService
     {
         return new AccountDto
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Email = "Фиг вам",
             Name = "Andrey",
             Surname = "Hard",
@@ -38,7 +38,7 @@ public class FakeAccountService : IAccountService
     {
         return new AccountDto
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Email = "Фиг вам",
             Name = "Andrey",
             Surname = "Hard",
