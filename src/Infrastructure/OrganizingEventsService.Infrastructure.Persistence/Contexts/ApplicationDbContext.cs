@@ -9,9 +9,7 @@ namespace OrganizingEventsService.Infrastructure.Persistence.Contexts;
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
     public required DbSet<AccountModel> Accounts { get; set; }
 
@@ -21,11 +19,7 @@ public class ApplicationDbContext : DbContext
 
     public required DbSet<FeedbackModel> Feedbacks { get; set; }
 
-    public required DbSet<PermissionModel> Permissions { get; set; }
-
     public required DbSet<RoleModel> Roles { get; set; }
-
-    public required DbSet<RolePermissionModel> RolePermissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -130,15 +124,18 @@ public class ApplicationDbContext : DbContext
                 .HasColumnName("invite_status")
                 .HasConversion<string>();
 
-            entity.HasOne(d => d.AccountIdNavigation).WithMany(p => p.EventParticipants)
+            entity.HasOne(d => d.AccountIdNavigation)
+                .WithMany(p => p.EventParticipants)
                 .HasForeignKey(d => d.AccountId)
                 .HasConstraintName("event_participant_account_pk_fkey");
 
-            entity.HasOne(d => d.EventIdNavigation).WithMany(p => p.EventParticipants)
+            entity.HasOne(d => d.EventIdNavigation)
+                .WithMany(p => p.EventParticipants)
                 .HasForeignKey(d => d.EventId)
                 .HasConstraintName("event_participant_event_pk_fkey");
 
-            entity.HasOne(d => d.RoleIdNavigation).WithMany(p => p.EventParticipants)
+            entity.HasOne(d => d.RoleIdNavigation)
+                .WithMany(p => p.EventParticipants)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("event_participant_role_pk_fkey");
@@ -159,26 +156,10 @@ public class ApplicationDbContext : DbContext
                 .HasColumnName("rating");
             entity.Property(e => e.Text).HasColumnName("text");
 
-            entity.HasOne(d => d.EventParticipantIdNavigation).WithMany(p => p.Feedbacks)
+            entity.HasOne(d => d.EventParticipantIdNavigation)
+                .WithMany(p => p.Feedbacks)
                 .HasForeignKey(d => d.EventParticipantId)
                 .HasConstraintName("feedback_event_participant_pk_fkey");
-        });
-
-        modelBuilder.Entity<PermissionModel>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("permission_pkey");
-
-            entity.ToTable("permission");
-
-            entity.HasIndex(e => e.Name, "permission_name_key").IsUnique();
-
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
-            entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.Name)
-                .HasMaxLength(30)
-                .HasColumnName("name");
         });
 
         modelBuilder.Entity<RoleModel>(entity =>
@@ -197,27 +178,5 @@ public class ApplicationDbContext : DbContext
                 .HasColumnName("name");
         });
 
-        modelBuilder.Entity<RolePermissionModel>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("role_permission_pkey");
-
-            entity.ToTable("role_permission");
-
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
-            entity.Property(e => e.PermissionId).HasColumnName("permission_pk");
-            entity.Property(e => e.RoleId).HasColumnName("role_pk");
-
-            entity.HasOne(d => d.PermissionIdNavigation)
-                .WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.PermissionId)
-                .HasConstraintName("role_permission_permission_pk_fkey");
-
-            entity.HasOne(d => d.RoleIdNavigation)
-                .WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("role_permission_role_pk_fkey");
-        });
     }
 }

@@ -38,12 +38,12 @@ public static class MvcBuilderExtensions
                 policyBuilder => policyBuilder.Requirements.Add(isParticipantRequirement));
         });
 
-        builder.Services.AddSingleton<IAuthorizationHandler, AuthenticationRequirementHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, RoleRequirementHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, FeedbackAuthorRequirementHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, InviteRequirementHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, AdminRequirementHandler>();
-        
+        builder.Services.AddTransient<IAuthorizationHandler, AuthenticationRequirementHandler>();
+        builder.Services.AddTransient<IAuthorizationHandler, RoleRequirementHandler>();
+        builder.Services.AddTransient<IAuthorizationHandler, FeedbackAuthorRequirementHandler>();
+        builder.Services.AddTransient<IAuthorizationHandler, InviteRequirementHandler>();
+        builder.Services.AddTransient<IAuthorizationHandler, AdminRequirementHandler>();
+
         return builder.AddApplicationPart(typeof(IAssemblyMarker).Assembly);
     }
 }

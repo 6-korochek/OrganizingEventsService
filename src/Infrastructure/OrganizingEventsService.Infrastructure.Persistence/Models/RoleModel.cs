@@ -10,5 +10,4 @@ public partial class RoleModel : IEntity
 
     public virtual ICollection<EventParticipantModel> EventParticipants { get;  } = new List<EventParticipantModel>();
 
-    public virtual ICollection<RolePermissionModel> RolePermissions { get;  } = new List<RolePermissionModel>();
 }
