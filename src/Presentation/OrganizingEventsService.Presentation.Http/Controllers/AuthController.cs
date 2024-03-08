@@ -30,13 +30,6 @@ public class AuthController : ControllerBase
     }
     
     [Authorize("IsAuthenticated")]
-    [HttpPost("/logout")]
-    public void Logout(string token)
-    {
-        _authService.Logout(token);
-    }
-    
-    [Authorize("IsAuthenticated")]
     [HttpGet("/me")]
     public ActionResult<AccountDto> Authenticate(AuthenticatedAccountDto authenticatedAccountDto)
     {

@@ -11,4 +11,8 @@ public class AccountDto
     public string Email { get; set; } = null!;
 
     public bool IsInvite { get; set; }
+    
+    public string PasswordHash { get; set; } = null!;
+
+    public DateTime PasswordHashUpdatedAt { get; set; }
 }
