@@ -7,7 +7,7 @@ namespace OrganizingEventsService.Application.Models.Dto.Event;
 
 public class CreateEventDto
 {
-    public string? Title { get; set; }
+    public string Name { get; set; } = null!;
 
     public DateTime StartDate { get; set; }
 
@@ -18,6 +18,7 @@ public class CreateEventDto
     public string? MeetingLink { get; set; }
 
     public uint MaxParticipant { get; set; }
-
+    
+    // ТОЛЬКО InPlaned || InDraft
     public EventStatus EventStatus { get; set; }
 }

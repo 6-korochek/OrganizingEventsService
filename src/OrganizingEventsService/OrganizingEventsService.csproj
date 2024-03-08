@@ -18,4 +18,10 @@
         </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="OrganizingEventsService.Presentation.Http">
+        <HintPath>..\Presentation\OrganizingEventsService.Presentation.Http\bin\Debug\net8.0\OrganizingEventsService.Presentation.Http.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

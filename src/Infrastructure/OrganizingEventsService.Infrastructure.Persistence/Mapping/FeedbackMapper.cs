@@ -16,8 +16,11 @@ public class FeedbackMapper
             EventParticipantIdNavigation = EventParticipantMapper.ToEntity(feedbackModel.EventParticipantIdNavigation)
         };
 
-        entity.EventParticipantIdNavigation.AccountIdNavigation =
-            AccountMapper.ToEntity(feedbackModel.EventParticipantIdNavigation.AccountIdNavigation);
+        if (feedbackModel.EventParticipantIdNavigation.AccountIdNavigation is not null)
+        {
+            entity.EventParticipantIdNavigation.AccountIdNavigation =
+                AccountMapper.ToEntity(feedbackModel.EventParticipantIdNavigation.AccountIdNavigation);
+        }
         
         return entity;
     }
@@ -33,8 +36,11 @@ public class FeedbackMapper
             EventParticipantIdNavigation = EventParticipantMapper.ToModel(feedback.EventParticipantIdNavigation)
         };
 
-        model.EventParticipantIdNavigation.AccountIdNavigation =
-            AccountMapper.ToModel(feedback.EventParticipantIdNavigation.AccountIdNavigation);
+        if (feedback.EventParticipantIdNavigation.AccountIdNavigation is not null)
+        {
+            model.EventParticipantIdNavigation.AccountIdNavigation =
+                AccountMapper.ToModel(feedback.EventParticipantIdNavigation.AccountIdNavigation);
+        }
 
         return model;
     }

@@ -4,11 +4,13 @@ using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.Models.Dto.Account;
 using OrganizingEventsService.Application.Models.Dto.Common;
 using OrganizingEventsService.Application.Models.Dto.Event;
+using OrganizingEventsService.Application.Models.Dto.Feedback;
 using OrganizingEventsService.Application.Models.Dto.Participant;
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
 namespace OrganizingEventsService.Presentation.Http.Controllers;
 
+[Authorize("IsAuthenticated")]
 [Route("[controller]")]
 public class EventController : ControllerBase
 {
@@ -19,112 +21,129 @@ public class EventController : ControllerBase
         _eventService = eventService;
     }
     
-    [Authorize("IsAuthenticated")]
+    [Authorize("IsInvited")]
     [HttpGet]
-    public ActionResult<EventDto> Get(
+    public async Task<ActionResult<EventDto>> Get(
         [FromQuery(Name = "event_id")] Guid? eventId,
         [FromQuery(Name = "invite_code")] string? inviteCode)
     {
-        EventDto response = _eventService.GetEventInfo(eventId, inviteCode);
+        EventDto response = await _eventService.GetEventInfo(eventId, inviteCode);
         return response;
     }
     
-    [Authorize("IsAuthenticated")]
     [HttpPost]
-    public ActionResult<NewEventDto> Create([FromBody] CreateEventDto createEventDto)
+    public async Task<ActionResult<NewEventDto>> Create([FromBody] CreateEventDto createEventDto)
     {
         var currentAccount = HttpContext.Items["CurrentAccount"] as AuthenticatedAccountDto;
-        NewEventDto response = _eventService.CreateEvent(currentAccount!.Account.Id, createEventDto);
+        NewEventDto response = await _eventService.CreateEvent(currentAccount!.Account.Id, createEventDto);
         return response;
     }
     
-    // Only Organizers
-    [HttpPatch("{id}")]
-    public ActionResult<Guid> PartiallyUpdate(Guid id,[FromBody] UpdateEventDto updateEventDto)
-    {
-        Guid response = _eventService.PartiallyUpdateEvent(id, updateEventDto);
-        return response;
-    }
-    
-    [Authorize("IsAuthenticated")]
     [Authorize("IsOrganizer")]
-    [HttpDelete("{id}")]
-    public void Delete(Guid id)
+    [HttpPatch("{eventId}")]
+    public async Task<ActionResult<Guid>> PartiallyUpdate(Guid eventId,[FromBody] UpdateEventDto updateEventDto)
     {
-        _eventService.DeleteEventById(id);
+        Guid response = await _eventService.PartiallyUpdateEvent(eventId, updateEventDto);
+        return response;
     }
     
-    [Authorize("IsAuthenticated")]
-    [HttpGet("/my")]
-    public IEnumerable<EventDto> GetMy(
-        [FromQuery(Name = "event_status")] EventStatus status,
-        [FromQuery(Name = "limit")] uint? limit,
-        [FromQuery(Name = "offset")] uint? offset,
-        AuthenticatedAccountDto authenticatedAccountDto)
+    [Authorize("IsOrganizer")]
+    [HttpDelete("{eventId}")]
+    public void Delete(Guid eventId)
     {
-        PaginationDto paginationDto = new PaginationDto
-        {
-            Limit = limit,
-            Offset = offset
-        };
-
-        IEnumerable<EventDto> response = _eventService.GetEventsWhereAccountIsParticipant(
-            authenticatedAccountDto.Account.Id, 
-            status, 
+        _eventService.DeleteEventById(eventId);
+    }
+    
+    [HttpGet("/my")]
+    public IAsyncEnumerable<EventDto> GetMy(
+        [FromQuery(Name = "event_status")] EventStatus status,
+        [FromQuery(Name = "limit")] ushort? limit = null,
+        [FromQuery(Name = "offset")] ushort? offset = null)
+    {
+        PaginationDto? paginationDto = limit != null
+            ? new PaginationDto
+            {
+                Limit = (ushort)limit,
+                Offset = offset ?? 0
+            }
+            : null;
+        
+        var currentAccount = HttpContext.Items["CurrentAccount"] as AuthenticatedAccountDto;
+        IAsyncEnumerable<EventDto> response = _eventService.GetEventsWhereAccountIsParticipant(
+            currentAccount!.Account.Id,
+            status,
             paginationDto);
 
         return response;
     }
     
-    // Only Organizers
-    [HttpGet("{id}/members")]
-    public IEnumerable<ParticipantDto> GetMembers(Guid id)
+    [Authorize("IsOrganizer")]
+    [HttpGet("{eventId}/members")]
+    public IAsyncEnumerable<ParticipantDto> GetMembers(Guid eventId)
     {
-        IEnumerable<ParticipantDto> response = _eventService.GetParticipants(id);
+        IAsyncEnumerable<ParticipantDto> response = _eventService.GetParticipants(eventId);
         return response;
     }
     
-    // Only Organizers
-    [HttpPost("{id}/members")]
-    public void CreateMembers(Guid id, [FromBody] IEnumerable<CreateParticipantDto> createParticipantDtoList)
+    [Authorize("IsOrganizer")]
+    [HttpPost("{eventId}/members")]
+    public void CreateMembers(Guid eventId, [FromBody] IEnumerable<CreateParticipantDto> createParticipantDtoList)
     {
         IEnumerable<CreateParticipantDto> participantList = createParticipantDtoList.ToList();
-        _eventService.CreateParticipants(id, participantList);
+        _eventService.CreateParticipants(eventId, participantList);
     }
     
-    // Only Organizers
-    [HttpDelete("{id}/members")]
-    public void DeleteMembers(Guid id, [FromBody] IEnumerable<string> accountEmails)
+    [Authorize("IsOrganizer")]
+    [HttpDelete("{eventId}/members")]
+    public void DeleteMembers(Guid eventId, [FromBody] IEnumerable<string> accountEmails)
     {
         _eventService.DeleteParticipantsByEmails(accountEmails);
     }
     
-    // ?????????????????????????????????????????????????????
-    // Only Organizers
-    [HttpGet($"{{id}}/members/{{accountId}}")]
-    public ActionResult<ParticipantDto> GetMember(Guid accountId)
+    [Authorize("IsOrganizer")]
+    [HttpGet($"{{eventId}}/members/{{accountId}}")]
+    public ActionResult<ParticipantDto> GetMember(Guid eventId, Guid accountId)
     {
-        var response = _eventService.GetParticipantByAccountId(accountId);
-        return response;
+        var response = _eventService.GetParticipantInEvent(eventId, accountId);
+        return response.Result;
     }
     
-    // ?????????????????????????????????????????????????????
-    // Only Organizers
-    [HttpPatch($"{{id}}/members/{{accountId}}")]
-    public ActionResult<ParticipantDto> PartiallyUpdateMember(Guid accountId, [FromBody] UpdateParticipantDto updateParticipantDto)
+    [Authorize("IsOrganizer")]
+    [HttpPatch($"{{eventId}}/members/{{accountId}}")]
+    public ActionResult<ParticipantDto> PartiallyUpdateMember(Guid eventId, Guid accountId, [FromBody] UpdateParticipantDto updateParticipantDto)
     {
-        var response = _eventService.PartiallyUpdateParticipant(accountId, updateParticipantDto);
-        return response;
+        var response = _eventService.PartiallyUpdateParticipant(eventId, accountId, updateParticipantDto);
+        return response.Result;
     }
     
-    // ?????????????????????????????????????????????????????
-    // Only Organizers
-    [HttpDelete($"{{id}}/members/{{accountId}}")]
+    [Authorize("IsOrganizer")]
+    [HttpDelete($"{{eventId}}/members/{{accountId}}")]
     public void DeleteMember(Guid accountId)
     {
         _eventService.DeleteParticipantByAccountId(accountId);
     }
     
-    // Feedbacks
-    ///////////////////////////////
+    [HttpGet("{eventId}/feedbacks")]
+    public IEnumerable<FeedbackDto> GetFeedbacks(Guid eventId)
+    {
+        IEnumerable<FeedbackDto> response = _eventService.GetFeedbacksByEventId(eventId);
+        return response;
+    }
+    
+    [Authorize("IsParticipant")]
+    [HttpPost("{eventId}/feedbacks")]
+    public ActionResult<Guid> CreateFeedback(Guid eventId, CreateFeedbackDto createFeedbackDto)
+    {
+        Guid response = _eventService.CreateFeedback(eventId, createFeedbackDto);
+        return response;
+    }
+    
+    [Authorize("IsParticipant")]
+    [Authorize("IsFeedbackAuthor")]
+    [HttpPatch($"{{eventId}}/feedback/{{feedbackId}}")]
+    public ActionResult<FeedbackDto> PartiallyUpdateFeedback(Guid feedbackId, UpdateFeedbackDto updateFeedbackDto)
+    {
+        FeedbackDto response = _eventService.PartiallyUpdateFeedback(feedbackId, updateFeedbackDto);
+        return response;
+    }
 }

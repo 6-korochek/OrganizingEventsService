@@ -29,6 +29,11 @@ public class FakeAccountService : IAccountService
         };
     }
 
+    public IEnumerable<AccountDto> GetExistingAccountsByEmail(IEnumerable<string> emails)
+    {
+        throw new NotImplementedException();
+    }
+
     public AccountDto UpdateAccount(Guid accountId, UpdateAccountDto updateAccountDto)
     {
         return new AccountDto
