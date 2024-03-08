@@ -16,12 +16,14 @@ public class AuthServiceImpl : Contracts.Services.AuthService
 
     public override AuthenticatedAccountDto AuthenticateAccount(string token)
     {
-        byte[] key = Encoding.ASCII.GetBytes(_jwtsettings.SecretKey);
+        byte[] key = Encoding.UTF8.GetBytes(_jwtsettings.SecretKey);
         var securityKey = new SymmetricSecurityKey(key);
 
         var validationParameters = new TokenValidationParameters
         {
             ValidateLifetime = true,
+            ValidateAudience = false,
+            ValidateIssuer = false,
             IssuerSigningKey = securityKey
         };
 
@@ -35,11 +37,11 @@ public class AuthServiceImpl : Contracts.Services.AuthService
             throw new UnauthorizedException();
         }
 
-        var account = AccountService.GetAccountById(Guid.Parse(userId));
+        var account = AccountService.GetAccountById(Guid.Parse(userId)).Result;
 
-        if (iat != null && DateTime.Compare(account.PasswordHashUpdatedAt, DateTime.Parse(iat)) > 0)
+        if (iat != null && account.PasswordHashUpdatedAt > DateTimeOffset.FromUnixTimeSeconds(long.Parse(iat)).DateTime)
         {
-            throw new Exception(); // Потом кастомные добавим
+            throw new UnauthorizedException();
         }
         return new AuthenticatedAccountDto
         {
@@ -48,7 +50,7 @@ public class AuthServiceImpl : Contracts.Services.AuthService
         };
     }
 
-    public override AuthenticatedAccountDto Register(RegisterAccountDto registerAccountDto)
+    public override async Task<AuthenticatedAccountDto> Register(RegisterAccountDto registerAccountDto)
     {
         var createAccountDto = new CreateAccountDto
         {
@@ -58,7 +60,7 @@ public class AuthServiceImpl : Contracts.Services.AuthService
             Password = registerAccountDto.Password
         };
 
-        var account = AccountService.CreateAccount(createAccountDto);
+        var account = await AccountService.CreateAccount(createAccountDto);
 
         var accessToken = GenerateAccessToken(account.Id);
         return new AuthenticatedAccountDto
@@ -68,15 +70,15 @@ public class AuthServiceImpl : Contracts.Services.AuthService
         };
     }
 
-    public override AuthenticatedAccountDto Login(LoginAccountDto loginAccountDto)
+    public override async Task<AuthenticatedAccountDto> Login(LoginAccountDto loginAccountDto)
     {
 
         // по емаил и сравниваю пароли
 
-        var account = AccountService.GetAccountByEmail(loginAccountDto.Email);
-        if (!BCrypt.Net.BCrypt.Verify(loginAccountDto.Password,account.PasswordHash))
+        var account = await AccountService.GetAccountByEmail(loginAccountDto.Email);
+        if (!BCrypt.Net.BCrypt.Verify(loginAccountDto.Password, account.PasswordHash))
         {
-            throw new Exception(); // Потом кастомные добавим
+            throw new UnauthorizedException();
         }
         var accessToken = GenerateAccessToken(account.Id);
         return new AuthenticatedAccountDto
@@ -95,8 +97,8 @@ public class AuthServiceImpl : Contracts.Services.AuthService
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim("user_id", Convert.ToString(userId)!),
-                new Claim("iat", DateTime.UtcNow.ToString()),
             }),
+            IssuedAt = DateTime.UtcNow,
             Expires = DateTime.UtcNow.AddDays(1),
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(key),

@@ -18,9 +18,9 @@ public class AccountController : ControllerBase
     }
     
     [HttpGet]
-    public ActionResult<AccountDto> Get(Guid accountId)
+    public async Task<AccountDto> Get(Guid accountId)
     {
-        AccountDto account = _accountService.GetAccountById(accountId);
+        AccountDto account = await _accountService.GetAccountById(accountId);
         return account;
     }
     

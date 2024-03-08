@@ -16,7 +16,7 @@ public partial class AccountModel : IEntity
 
     public bool IsInvite { get; set; } = true;
 
-    public bool? IsAdmin { get; set; }
+    public bool IsAdmin { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

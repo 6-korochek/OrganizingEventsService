@@ -16,24 +16,24 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("/register")]
-    public ActionResult<AuthenticatedAccountDto> Register([FromBody] RegisterAccountDto registerAccountDto)
+    public async Task<AuthenticatedAccountDto> Register([FromBody] RegisterAccountDto registerAccountDto)
     {
-        AuthenticatedAccountDto response = _authService.Register(registerAccountDto);
+        AuthenticatedAccountDto response = await _authService.Register(registerAccountDto);
         return response;
     }
     
     [HttpPost("/login")]
-    public ActionResult<AuthenticatedAccountDto> Login([FromBody] LoginAccountDto loginAccountDto)
+    public async Task<AuthenticatedAccountDto> Login([FromBody] LoginAccountDto loginAccountDto)
     {
-        AuthenticatedAccountDto response = _authService.Login(loginAccountDto);
+        AuthenticatedAccountDto response = await _authService.Login(loginAccountDto);
         return response;
     }
     
     [Authorize("IsAuthenticated")]
     [HttpGet("/me")]
-    public ActionResult<AccountDto> Authenticate(AuthenticatedAccountDto authenticatedAccountDto)
+    public ActionResult<AccountDto> Authenticate()
     {
-        // Сразу получаем текущий аккаунт через миддлварь аутентификации (миддварь потом напишу)
-        return authenticatedAccountDto.Account;
+        var currentAccount = HttpContext.Items["CurrentAccount"] as AuthenticatedAccountDto;
+        return currentAccount!.Account;
     }
 }

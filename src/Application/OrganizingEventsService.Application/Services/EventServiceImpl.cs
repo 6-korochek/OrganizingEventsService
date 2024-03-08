@@ -166,8 +166,8 @@ public class EventServiceImpl : EventService
 
     public override IAsyncEnumerable<ParticipantDto> GetParticipants(Guid eventId)
     {
-        var eventEntity = _eventRepository.GetById(eventId);
-        var query = new EventParticipantQuery().WithEventId(eventEntity.Result.Id).WithAccount().WithRole();
+        var eventEntity = _eventRepository.GetById(eventId).Result;
+        var query = new EventParticipantQuery().WithEventId(eventEntity.Id).WithAccount().WithRole();
         var eventParticipantEntities = _eventRepository.GetParticipantListByQuery(query);
         var participants = from e in eventParticipantEntities
             select new ParticipantDto()
@@ -212,7 +212,7 @@ public class EventServiceImpl : EventService
 
         IEnumerable<CreateParticipantDto> createParticipantDtos = createParticipantDtoList as CreateParticipantDto[] ?? createParticipantDtoList.ToArray();
         var accountEmails = from dto in createParticipantDtos select dto.AccountEmail;
-        var existingAccountDtoList = AccountService.GetExistingAccountsByEmail(accountEmails);
+        var existingAccountDtoList = AccountService.GetExistingAccountsByEmail(accountEmails).Result;
 
         IEnumerable<AccountDto> accountDtoList = existingAccountDtoList as AccountDto[] ?? existingAccountDtoList.ToArray();
         if (!accountDtoList.Any())

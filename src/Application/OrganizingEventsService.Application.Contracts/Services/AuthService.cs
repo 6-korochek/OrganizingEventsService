@@ -17,8 +17,8 @@ public abstract class AuthService
 
     public abstract AuthenticatedAccountDto AuthenticateAccount(string token);
 
-    public abstract AuthenticatedAccountDto Register(RegisterAccountDto registerAccountDto);
+    public abstract Task<AuthenticatedAccountDto> Register(RegisterAccountDto registerAccountDto);
 
-    public abstract AuthenticatedAccountDto Login(LoginAccountDto loginAccountDto);
+    public abstract Task<AuthenticatedAccountDto> Login(LoginAccountDto loginAccountDto);
 
 }

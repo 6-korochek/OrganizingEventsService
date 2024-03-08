@@ -4,7 +4,7 @@ public class AuthenticationRequirement : BaseRequirement
 {
     public string AuthenticationHeaderName { get; }
 
-    public AuthenticationRequirement(string authenticationHeaderName = "Token") : base("IsAuthenticated")
+    public AuthenticationRequirement(string authenticationHeaderName = "Authorization") : base("IsAuthenticated")
     {
         AuthenticationHeaderName = authenticationHeaderName;
     }
