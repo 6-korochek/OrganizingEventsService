@@ -11,4 +11,6 @@ public interface IAccountService
     AccountDto UpdateAccount(Guid accountId, UpdateAccountDto updateAccountDto);
 
     void DeleteAccountById(Guid accountId);
+
+    AccountDto CreateAccount(CreateAccountDto createAccountDto);
 }

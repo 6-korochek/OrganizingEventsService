@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions
     {
         collection.AddScoped<IAccountService, FakeAccountService>();
         collection.AddScoped<EventService, FakeEventService>();
-        collection.AddScoped<AuthService, FakeAuthService>();
+        collection.AddScoped<AuthService, AuthServiceImpl>();
         
         return collection;
     }

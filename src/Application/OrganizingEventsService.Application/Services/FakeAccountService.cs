@@ -42,4 +42,8 @@ public class FakeAccountService : IAccountService
     }
 
     public void DeleteAccountById(Guid accountId) {}
+    public AccountDto CreateAccount(CreateAccountDto createAccountDto)
+    {
+        throw new NotImplementedException();
+    }
 }
