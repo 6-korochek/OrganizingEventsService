@@ -66,20 +66,6 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
         return EventParticipantMapper.ToEntity(model);
     }
 
-    public async Task<EventParticipant> GetParticipantByRoleName(Guid eventId, string roleName)
-    {
-        EventParticipantModel? model =
-            await DbContext.EventParticipants.FirstOrDefaultAsync(model =>
-                model.EventId == eventId && model.EventIdNavigation.Name == roleName);
-        
-        if (model is null)
-        {
-            throw new Exception(); // Потом кастомные добавим 
-        }
-
-        return EventParticipantMapper.ToEntity(model);
-    }
-
     public async Task AddParticipants(Guid eventId, IEnumerable<EventParticipant> eventParticipants)
     {
         var existsParticipant = DbContext.EventParticipants.Where(model => model.EventId == eventId);

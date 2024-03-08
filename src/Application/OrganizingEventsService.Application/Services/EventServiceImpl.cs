@@ -3,6 +3,7 @@ using OrganizingEventsService.Application.Abstractions.Persistence.Repositories;
 using OrganizingEventsService.Application.ApplicationConstants;
 using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.Exceptions;
+using OrganizingEventsService.Application.Models.Dto.Account;
 using OrganizingEventsService.Application.Models.Dto.Common;
 using OrganizingEventsService.Application.Models.Dto.Event;
 using OrganizingEventsService.Application.Models.Dto.Feedback;
@@ -26,11 +27,6 @@ public class EventServiceImpl : EventService
 
     public override async Task<EventDto> GetEventInfo(Guid? eventId, string? inviteCode)
     {
-        if (inviteCode == null && eventId == null)
-        {
-            throw new Exception("Invalid eventId and inviteCode!"); // Потом кастомные добавим
-        }
-
         Event eventEntity = null!;
         if (inviteCode != null)
         {
@@ -60,7 +56,7 @@ public class EventServiceImpl : EventService
             EndDatetime = eventEntity.EndDatetime,
             Organizer = new OrganizerDto
             {
-                AccountId = organizer.AccountIdNavigation.Id,
+                AccountId = organizer!.AccountIdNavigation!.Id,
                 Name = organizer.AccountIdNavigation.Name,
                 Surname = organizer.AccountIdNavigation.Surname
             }
@@ -113,21 +109,19 @@ public class EventServiceImpl : EventService
             MaxParticipant = createEventDto.MaxParticipant,
             InviteCode = GenerateInviteCode()
         };
-        
-        await _eventRepository.Add(eventEntity);
-        var participants = new List<EventParticipant>
-        {
-            new EventParticipant
-            {
-                Id = new Guid(),
-                AccountId = organizerId,
-                EventId = eventEntity.Id,
-                InviteStatus = EventParticipantInviteStatus.Accepted,
-                RoleId = Roles.ORGANIZER
-            }
-        };
 
-        await _eventRepository.AddParticipants(eventEntity.Id, participants);
+        var organizer = new EventParticipant
+        {
+            Id = new Guid(),
+            AccountId = organizerId,
+            EventId = eventEntity.Id,
+            InviteStatus = EventParticipantInviteStatus.Accepted,
+            RoleId = Roles.ORGANIZER
+        };
+        
+        eventEntity.EventParticipants.Add(organizer);
+        await _eventRepository.Add(eventEntity);
+        
         return new NewEventDto
         {
             Id = eventEntity.Id,
@@ -177,18 +171,19 @@ public class EventServiceImpl : EventService
         var query = new EventParticipantQuery().WithEventId(eventEntity.Result.Id).WithAccount().WithRole();
         var eventParticipantEntities = _eventRepository.GetParticipantListByQuery(query);
         var participants = from e in eventParticipantEntities
-                           select new ParticipantDto()
-                           {
-                               AccountId = e.AccountId,
-                               AccountName = e.AccountIdNavigation.Name,
-                               AccountSurName = e.AccountIdNavigation.Surname,
-                               Role = new RoleDto()
-                               {
-                                   Id = e.RoleId,
-                                   Name = e.RoleIdNavigation.Name
-                               },
-                               Status = e.InviteStatus
-                           };
+            select new ParticipantDto()
+            {
+                AccountId = e.AccountId,
+                AccountName = e!.AccountIdNavigation!.Name,
+                AccountSurName = e!.AccountIdNavigation!.Surname,
+                Role = new RoleDto()
+                {
+                    Id = e.RoleId,
+                    Name = e!.RoleIdNavigation!.Name
+                },
+                Status = e.InviteStatus
+            };
+        
         return participants;
     }
 
@@ -198,14 +193,15 @@ public class EventServiceImpl : EventService
         var participantDto = new ParticipantDto()
         {
             AccountId = participantEntity.AccountId,
-            AccountName = participantEntity.AccountIdNavigation.Name,
+            AccountName = participantEntity!.AccountIdNavigation!.Name,
             AccountSurName = participantEntity.AccountIdNavigation.Surname,
             Role = new RoleDto()
             {
                 Id = participantEntity.RoleId,
-                Name = participantEntity.RoleIdNavigation.Name
+                Name = participantEntity!.RoleIdNavigation!.Name
             }
         };
+        
         return participantDto;
     }
 
@@ -215,27 +211,30 @@ public class EventServiceImpl : EventService
     {
         var eventEntity = await _eventRepository.GetById(eventId);
 
-        var accountEmails = from dto in createParticipantDtoList select dto.AccountEmail;
+        IEnumerable<CreateParticipantDto> createParticipantDtos = createParticipantDtoList as CreateParticipantDto[] ?? createParticipantDtoList.ToArray();
+        var accountEmails = from dto in createParticipantDtos select dto.AccountEmail;
         var existingAccountDtoList = AccountService.GetExistingAccountsByEmail(accountEmails);
 
-        if (!existingAccountDtoList.Any())
+        IEnumerable<AccountDto> accountDtoList = existingAccountDtoList as AccountDto[] ?? existingAccountDtoList.ToArray();
+        if (!accountDtoList.Any())
         {
             return;
         }
 
-        var newEventParticipants = from createParticipantDto in createParticipantDtoList
-                                   where existingAccountDtoList.Select(acc => acc.Email)
-                                       .Contains(createParticipantDto.AccountEmail)
-                                   let account = existingAccountDtoList.First(c =>
-                                       c.Email == createParticipantDto.AccountEmail)
-                                   select new EventParticipant()
-                                   {
-                                       Id = new Guid(),
-                                       EventId = eventId,
-                                       AccountId = account.Id,
-                                       InviteStatus = EventParticipantInviteStatus.Pending,
-                                       RoleId = createParticipantDto.RoleId
-                                   };
+        var newEventParticipants = from createParticipantDto in createParticipantDtos
+            where accountDtoList.Select(acc => acc.Email)
+                .Contains(createParticipantDto.AccountEmail)
+            let account = accountDtoList.First(c =>
+                c.Email == createParticipantDto.AccountEmail)
+            select new EventParticipant()
+            {
+                Id = new Guid(),
+                EventId = eventId,
+                AccountId = account.Id,
+                InviteStatus = EventParticipantInviteStatus.Pending,
+                RoleId = createParticipantDto.RoleId
+            };
+        
         await _eventRepository.AddParticipants(eventEntity.Id, newEventParticipants);
     }
 
@@ -264,9 +263,9 @@ public class EventServiceImpl : EventService
         return new ParticipantDto()
         {
             AccountId = participantEntity.AccountId,
-            AccountName = participantEntity.AccountIdNavigation.Name,
+            AccountName = participantEntity!.AccountIdNavigation!.Name,
             AccountSurName = participantEntity.AccountIdNavigation.Surname,
-            Role = new RoleDto() { Id = participantEntity.RoleId, Name = participantEntity.RoleIdNavigation.Name },
+            Role = new RoleDto() { Id = participantEntity.RoleId, Name = participantEntity!.RoleIdNavigation!.Name },
             Status = participantEntity.InviteStatus
         };
     }

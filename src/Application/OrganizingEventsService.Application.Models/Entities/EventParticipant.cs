@@ -18,11 +18,11 @@ public partial class EventParticipant
 
     public Guid RoleId { get; set; }
 
-    public virtual Account AccountIdNavigation { get; set; } = null!;
+    public virtual Account? AccountIdNavigation { get; set; }
 
-    public virtual Event EventIdNavigation { get; set; } = null!;
+    public virtual Event? EventIdNavigation { get; set; }
 
-    public virtual ICollection<Feedback> Feedbacks { get;  } = new List<Feedback>();
+    public virtual ICollection<Feedback> Feedbacks { get; } = new List<Feedback>();
 
-    public virtual Role RoleIdNavigation { get; set; } = null!;
+    public virtual Role? RoleIdNavigation { get; set; }
 }

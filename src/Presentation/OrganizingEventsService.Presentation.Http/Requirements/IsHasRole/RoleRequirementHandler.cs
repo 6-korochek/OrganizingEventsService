@@ -25,7 +25,7 @@ public class RoleRequirementHandler : AuthorizationHandler<RoleRequirement>
 
         Guid eventId = (Guid)httpContext.GetRouteValue("id")!;
         var participant = 
-            _eventService.GetParticipantInEvent(currentAccount.Account.Id, eventId);
+            _eventService.GetParticipantInEvent(eventId, currentAccount.Account.Id);
 
         if (participant.Result.Role.Id != requirement.RoleId)
         {
