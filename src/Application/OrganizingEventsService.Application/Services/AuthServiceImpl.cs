@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using OrganizingEventsService.Application.Abstractions.Exceptions;
 using OrganizingEventsService.Application.Contracts.Services;
+using OrganizingEventsService.Application.Exceptions;
 using OrganizingEventsService.Application.Models.Dto.Account;
 using OrganizingEventsService.Application.Models.Entities;
 using System.IdentityModel.Tokens.Jwt;
