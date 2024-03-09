@@ -6,6 +6,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="SourceKit.Generators.Builder"/>
     </ItemGroup>
     <!-- добавил из лабы -->

@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageVersion Include="EntityFramework" Version="6.4.4" />
+    <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageVersion Include="Itmo.Dev.Editorconfig" Version="1.0.1" />
     <PackageVersion Include="Itmo.Dev.Platform.Logging" Version="1.0.82" />
     <PackageVersion Include="Itmo.Dev.Platform.Postgres" Version="1.1.82" />

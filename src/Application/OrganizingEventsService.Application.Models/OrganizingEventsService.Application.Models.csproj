@@ -2,4 +2,7 @@
   <ItemGroup>
     <Folder Include="Dto\" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" />
+  </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="Itmo.Dev.Platform.Postgres"/>
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>
     </ItemGroup>
