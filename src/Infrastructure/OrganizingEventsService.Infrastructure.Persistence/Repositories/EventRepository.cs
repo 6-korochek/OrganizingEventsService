@@ -91,6 +91,12 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
         await DbContext.EventParticipants.Where(model => model.Id == eventParticipant.Id).ExecuteDeleteAsync();
     }
 
+    public async Task DeleteParticipant(IEnumerable<EventParticipant> eventParticipants)
+    {
+        var ids = eventParticipants.Select(x => x.Id);
+        await DbContext.EventParticipants.Where(model => ids.Contains(model.Id)).ExecuteDeleteAsync();
+    }
+
     protected override Event MapToEntity(EventModel model)
     {
         return EventMapper.ToEntity(model);

@@ -19,10 +19,14 @@ namespace OrganizingEventsService.Application.Services;
 public class EventServiceImpl : EventService
 {
     private readonly IEventRepository _eventRepository;
+    private readonly IAccountRepository _accountRepository;
+    private readonly IFeedbackRepository _feedbackRepository;
     
-    public EventServiceImpl(IAccountService accountService, IEventRepository eventRepository) : base(accountService)
+    public EventServiceImpl(IAccountService accountService, IEventRepository eventRepository, IAccountRepository accountRepository, IFeedbackRepository feedbackRepository) : base(accountService)
     {
         _eventRepository = eventRepository;
+        _accountRepository = accountRepository;
+        _feedbackRepository = feedbackRepository;
     }
 
     public override async Task<EventDto> GetEventInfo(Guid? eventId, string? inviteCode)
@@ -269,39 +273,81 @@ public class EventServiceImpl : EventService
         };
     }
 
-    public override void DeleteParticipantsByEmails(IEnumerable<string> accountEmails)
+    public override async void DeleteParticipantsByEmails(Guid eventId, IEnumerable<string> accountEmails)
     {
-        throw new NotImplementedException();
+        var accountQuery = new AccountQuery().WithEmail(accountEmails);
+        var accountEntityList = await _accountRepository.GetListByQuery(accountQuery).ToListAsync();
+        var eventParticipantQuery = new EventParticipantQuery().WithEventId(eventId);
+        foreach (var accountEntity in accountEntityList)
+        {
+            eventParticipantQuery.WithAccountId(accountEntity.Id);
+        }
+
+        var eventParticipants = await _eventRepository.GetParticipantListByQuery(eventParticipantQuery).ToListAsync();
+        await _eventRepository.DeleteParticipant(eventParticipants);
     }
 
-    public override void DeleteParticipantByAccountId(Guid accountId)
+    public override async void DeleteParticipantByAccountId(Guid eventId, Guid accountId)
     {
-        throw new NotImplementedException();
+        var eventParticipantQuery = new EventParticipantQuery().WithEventId(eventId).WithAccountId(accountId);
+        var eventParticipantEntity = await _eventRepository.GetParticipantListByQuery(eventParticipantQuery).FirstAsync();
+        await _eventRepository.DeleteParticipant(eventParticipantEntity);
     }
 
-    public override FeedbackDto GetFeedbackInfo(Guid feedbackId)
+    public override async Task<FeedbackDto> GetFeedbackInfo(Guid feedbackId)
     {
-        throw new NotImplementedException();
+        var feedbackEntity = await _feedbackRepository.GetById(feedbackId);
+        var feedBackDto = new FeedbackDto()
+        {
+            Id = feedbackEntity.Id,
+            Rating = feedbackEntity.Rating,
+            Text = feedbackEntity.Text
+        };
+        var eventParticipant = await _eventRepository.GetParticipantListByQuery(new EventParticipantQuery().WithId(feedbackEntity.EventParticipantId)).FirstAsync();
+        feedBackDto.Author = new AuthorDto()
+        {
+            AccountId = eventParticipant.AccountId
+        };
+        return feedBackDto;
     }
 
-    public override IEnumerable<FeedbackDto> GetFeedbacksByEventId(Guid eventId)
+    public override async Task<IEnumerable<FeedbackDto>> GetFeedbacksByEventId(Guid eventId)
     {
-        throw new NotImplementedException();
+        var feedbackList = await _feedbackRepository.GetListByQuery(new FeedbackQuery().WithEventId(eventId)).ToListAsync();
+        List<FeedbackDto> feedbackDtos = feedbackList.Select(feedbackEntity => new FeedbackDto() { Id = feedbackEntity.Id, Rating = feedbackEntity.Rating, Text = feedbackEntity.Text }).ToList();
+        return feedbackDtos;
     }
 
     public override Guid CreateFeedback(Guid eventId, CreateFeedbackDto createFeedbackDto)
     {
-        throw new NotImplementedException();
+        var feedbackEntity = new Feedback()
+        {
+            EventParticipantId = eventId,
+            Id = Guid.NewGuid(),
+            Rating = createFeedbackDto.Rating,
+            Text = createFeedbackDto.Text
+        };
+        _feedbackRepository.Add(feedbackEntity);
+        return feedbackEntity.Id;
     }
 
-    public override FeedbackDto PartiallyUpdateFeedback(Guid feedbackId, UpdateFeedbackDto updateFeedbackDto)
+    public override async Task<FeedbackDto> PartiallyUpdateFeedback(Guid feedbackId, UpdateFeedbackDto updateFeedbackDto)
     {
-        throw new NotImplementedException();
+        var feedbackEntity = await _feedbackRepository.GetById(feedbackId);
+        feedbackEntity.Rating = updateFeedbackDto.Rating ?? feedbackEntity.Rating;
+        feedbackEntity.Text = updateFeedbackDto.Text ?? feedbackEntity.Text;
+        await _feedbackRepository.Update(feedbackEntity);
+        return new FeedbackDto()
+        {
+            Id = feedbackEntity.Id,
+            Rating = feedbackEntity.Rating,
+            Text = feedbackEntity.Text
+        };
     }
 
-    public override void DeleteFeedbackById(Guid feedbackId)
+    public override async void DeleteFeedbackById(Guid feedbackId)
     {
-        throw new NotImplementedException();
+        await _feedbackRepository.DeleteById(feedbackId);
     }
 
     private string GenerateInviteCode(ushort lenght = 10)
