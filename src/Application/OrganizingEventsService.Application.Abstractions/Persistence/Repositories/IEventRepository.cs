@@ -22,4 +22,5 @@ public interface IEventRepository : IBaseRepository<Event>
     Task UpdateParticipant(EventParticipant eventParticipant);
 
     Task DeleteParticipant(EventParticipant eventParticipant);
+    Task DeleteParticipant(IEnumerable<EventParticipant> eventParticipant);
 }

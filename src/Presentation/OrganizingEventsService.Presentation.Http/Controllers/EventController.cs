@@ -97,7 +97,7 @@ public class EventController : ControllerBase
     [HttpDelete("{eventId}/members")]
     public void DeleteMembers(Guid eventId, [FromBody] IEnumerable<string> accountEmails)
     {
-        _eventService.DeleteParticipantsByEmails(accountEmails);
+        _eventService.DeleteParticipantsByEmails(eventId, accountEmails);
     }
     
     [Authorize("IsOrganizer")]
@@ -118,15 +118,15 @@ public class EventController : ControllerBase
     
     [Authorize("IsOrganizer")]
     [HttpDelete($"{{eventId}}/members/{{accountId}}")]
-    public void DeleteMember(Guid accountId)
+    public void DeleteMember(Guid eventId, Guid accountId)
     {
-        _eventService.DeleteParticipantByAccountId(accountId);
+        _eventService.DeleteParticipantByAccountId(eventId, accountId);
     }
     
     [HttpGet("{eventId}/feedbacks")]
     public IEnumerable<FeedbackDto> GetFeedbacks(Guid eventId)
     {
-        IEnumerable<FeedbackDto> response = _eventService.GetFeedbacksByEventId(eventId);
+        var response = _eventService.GetFeedbacksByEventId(eventId).Result;
         return response;
     }
     
@@ -143,7 +143,7 @@ public class EventController : ControllerBase
     [HttpPatch($"{{eventId}}/feedback/{{feedbackId}}")]
     public ActionResult<FeedbackDto> PartiallyUpdateFeedback(Guid feedbackId, UpdateFeedbackDto updateFeedbackDto)
     {
-        FeedbackDto response = _eventService.PartiallyUpdateFeedback(feedbackId, updateFeedbackDto);
+        var response = _eventService.PartiallyUpdateFeedback(feedbackId, updateFeedbackDto).Result;
         return response;
     }
 }

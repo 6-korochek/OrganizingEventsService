@@ -13,4 +13,10 @@ public class FeedbackQuery
         IncludeAuthor = includeAuthor;
         return this;
     }
+
+    public FeedbackQuery WithEventId(Guid eventId)
+    {
+        EventIds.Add(eventId);
+        return this;
+    }
 }
