@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
             options.UseNpgsql(configuration.GetSection("Infrastructure:Persistence:Postgres:ConnectionString").Value));
 
         collection.AddScoped<IAccountRepository, AccountRepository>();
+        collection.AddScoped<IFeedbackRepository, FeedbackRepository>();
         collection.AddScoped<IEventRepository, EventRepository>();
         collection.AddScoped<IRoleRepository, RoleRepository>();
         
