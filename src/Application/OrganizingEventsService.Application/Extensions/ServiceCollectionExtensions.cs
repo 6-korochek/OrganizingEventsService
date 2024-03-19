@@ -11,6 +11,9 @@ public static class ServiceCollectionExtensions
         collection.AddScoped<IAccountService, AccountServiceImpl>();
         collection.AddScoped<AuthService, AuthServiceImpl>();
         collection.AddScoped<EventService, EventServiceImpl>();
+        
+        // Register CQRS Mediator + Handlers
+        collection.AddMediatR(cf => cf.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly));
         return collection;
     }
 }

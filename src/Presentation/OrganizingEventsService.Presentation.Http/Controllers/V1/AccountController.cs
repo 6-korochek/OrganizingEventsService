@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.Models.Dto.Account;
 
-namespace OrganizingEventsService.Presentation.Http.Controllers;
+namespace OrganizingEventsService.Presentation.Http.Controllers.V1;
 
 [Authorize("IsAuthenticated")]
 [Authorize("IsAdmin")]

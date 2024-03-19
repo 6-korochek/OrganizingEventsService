@@ -8,10 +8,10 @@ using OrganizingEventsService.Application.Models.Dto.Feedback;
 using OrganizingEventsService.Application.Models.Dto.Participant;
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
-namespace OrganizingEventsService.Presentation.Http.Controllers;
+namespace OrganizingEventsService.Presentation.Http.Controllers.V1;
 
 [Authorize("IsAuthenticated")]
-[Route("[controller]")]
+[Route("/api/v1/[controller]")]
 public class EventController : ControllerBase
 {
     private readonly EventService _eventService;

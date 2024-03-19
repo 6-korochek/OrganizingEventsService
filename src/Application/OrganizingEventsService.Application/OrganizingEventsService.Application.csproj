@@ -7,9 +7,14 @@
 
     <ItemGroup>
         <PackageReference Include="BCrypt.Net-Next" />
+        <PackageReference Include="MediatR" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
     </ItemGroup>
 
 
+
+    <ItemGroup>
+      <Folder Include="CQRS\Queries\" />
+    </ItemGroup>
 
 </Project>
