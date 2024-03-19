@@ -45,7 +45,7 @@ public class EventServiceImpl : EventService
             .WithRoleId(Roles.ORGANIZER)
             .WithAccount()
             .WithLimit(1);
-
+        
         var organizer = await _eventRepository.GetParticipantListByQuery(query).FirstAsync();
         return new EventDto // Это п*зд*ц заменим на AutoMapper
         {

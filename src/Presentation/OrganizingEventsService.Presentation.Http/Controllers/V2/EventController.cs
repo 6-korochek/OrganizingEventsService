@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.CQRS.Commands.CreateEvent;
+using OrganizingEventsService.Application.CQRS.Queries.GetEventInfo;
 using OrganizingEventsService.Application.Models.Dto.Account;
 using OrganizingEventsService.Application.Models.Dto.Common;
 using OrganizingEventsService.Application.Models.Dto.Event;
@@ -23,15 +24,15 @@ public class EventController : ControllerBase
         _mediator = mediator;
     }
     
-    // [Authorize("IsInvited")]
-    // [HttpGet]
-    // public async Task<ActionResult<EventDto>> Get(
-    //     [FromQuery(Name = "event_id")] Guid? eventId,
-    //     [FromQuery(Name = "invite_code")] string? inviteCode)
-    // {
-    //     EventDto response = await _eventService.GetEventInfo(eventId, inviteCode);
-    //     return response;
-    // }
+    [Authorize("IsInvited")]
+    [HttpGet]
+    public async Task<ActionResult<EventDto>> Get(
+        [FromQuery(Name = "eventId")] Guid? eventId,
+        [FromQuery(Name = "inviteCode")] string? inviteCode)
+    {
+        EventDto response = await _mediator.Send(new GetEventInfoQuery { EventId = eventId, InviteCode = inviteCode });
+        return response;
+    }
     
     [HttpPost]
     public async Task<ActionResult<NewEventDto>> Create([FromBody] CreateEventDto createEventDto)

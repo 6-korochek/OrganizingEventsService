@@ -24,8 +24,8 @@ public class EventController : ControllerBase
     [Authorize("IsInvited")]
     [HttpGet]
     public async Task<ActionResult<EventDto>> Get(
-        [FromQuery(Name = "event_id")] Guid? eventId,
-        [FromQuery(Name = "invite_code")] string? inviteCode)
+        [FromQuery(Name = "eventId")] Guid? eventId,
+        [FromQuery(Name = "inviteCode")] string? inviteCode)
     {
         EventDto response = await _eventService.GetEventInfo(eventId, inviteCode);
         return response;
@@ -56,7 +56,7 @@ public class EventController : ControllerBase
     
     [HttpGet("/my")]
     public IAsyncEnumerable<EventDto> GetMy(
-        [FromQuery(Name = "event_status")] EventStatus status,
+        [FromQuery(Name = "eventStatus")] EventStatus status,
         [FromQuery(Name = "limit")] ushort? limit = null,
         [FromQuery(Name = "offset")] ushort? offset = null)
     {
