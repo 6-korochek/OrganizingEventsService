@@ -8,6 +8,7 @@ namespace OrganizingEventsService.Presentation.Http.Controllers.V1;
 [Authorize("IsAuthenticated")]
 [Authorize("IsAdmin")]
 [Route("[controller]/{accountId}")]
+[ApiController]
 public class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
