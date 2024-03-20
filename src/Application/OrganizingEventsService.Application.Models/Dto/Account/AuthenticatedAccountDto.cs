@@ -5,6 +5,4 @@ public class AuthenticatedAccountDto
     public AccountDto Account { get; set; } = null!;
     
     public string Token { get; set; } = null!;
-    
-    public bool? IsAdmin { get; set; }
 }

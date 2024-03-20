@@ -14,7 +14,7 @@ public class AdminRequirementHandler : AuthorizationHandler<AdminRequirement>
             throw new ForbiddenException();
         }
 
-        if (currentAccount.IsAdmin == true)
+        if (currentAccount.Account.IsAdmin)
         {
             context.Succeed(requirement);
         }

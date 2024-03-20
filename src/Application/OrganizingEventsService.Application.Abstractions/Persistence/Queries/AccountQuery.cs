@@ -17,10 +17,28 @@ public class AccountQuery
         Ids.Add(id);
         return this;
     }
+    
+    public AccountQuery WithId(IEnumerable<Guid> ids)
+    {
+        foreach (var id in ids)
+        {
+          WithId(id);
+        }
+        return this;
+    }
 
     public AccountQuery WithEmail(string email)
     {
         Emails.Add(email);
+        return this;
+    }
+    
+    public AccountQuery WithEmail(IEnumerable<string> emails)
+    {
+        foreach (var email in emails)
+        {
+            WithEmail(email);
+        }
         return this;
     }
 

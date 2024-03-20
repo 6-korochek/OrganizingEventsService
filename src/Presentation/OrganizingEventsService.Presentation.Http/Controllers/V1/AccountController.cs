@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OrganizingEventsService.Application.Contracts.Services;
 using OrganizingEventsService.Application.Models.Dto.Account;
 
-namespace OrganizingEventsService.Presentation.Http.Controllers;
+namespace OrganizingEventsService.Presentation.Http.Controllers.V1;
 
 [Authorize("IsAuthenticated")]
 [Authorize("IsAdmin")]
@@ -18,9 +18,9 @@ public class AccountController : ControllerBase
     }
     
     [HttpGet]
-    public ActionResult<AccountDto> Get(Guid accountId)
+    public async Task<AccountDto> Get(Guid accountId)
     {
-        AccountDto account = _accountService.GetAccountById(accountId);
+        AccountDto account = await _accountService.GetAccountById(accountId);
         return account;
     }
     

@@ -8,10 +8,10 @@ using OrganizingEventsService.Application.Models.Dto.Feedback;
 using OrganizingEventsService.Application.Models.Dto.Participant;
 using OrganizingEventsService.Application.Models.Entities.Enums;
 
-namespace OrganizingEventsService.Presentation.Http.Controllers;
+namespace OrganizingEventsService.Presentation.Http.Controllers.V1;
 
 [Authorize("IsAuthenticated")]
-[Route("[controller]")]
+[Route("/api/v1/[controller]")]
 public class EventController : ControllerBase
 {
     private readonly EventService _eventService;
@@ -24,8 +24,8 @@ public class EventController : ControllerBase
     [Authorize("IsInvited")]
     [HttpGet]
     public async Task<ActionResult<EventDto>> Get(
-        [FromQuery(Name = "event_id")] Guid? eventId,
-        [FromQuery(Name = "invite_code")] string? inviteCode)
+        [FromQuery(Name = "eventId")] Guid? eventId,
+        [FromQuery(Name = "inviteCode")] string? inviteCode)
     {
         EventDto response = await _eventService.GetEventInfo(eventId, inviteCode);
         return response;
@@ -56,7 +56,7 @@ public class EventController : ControllerBase
     
     [HttpGet("/my")]
     public IAsyncEnumerable<EventDto> GetMy(
-        [FromQuery(Name = "event_status")] EventStatus status,
+        [FromQuery(Name = "eventStatus")] EventStatus status,
         [FromQuery(Name = "limit")] ushort? limit = null,
         [FromQuery(Name = "offset")] ushort? offset = null)
     {
@@ -97,7 +97,7 @@ public class EventController : ControllerBase
     [HttpDelete("{eventId}/members")]
     public void DeleteMembers(Guid eventId, [FromBody] IEnumerable<string> accountEmails)
     {
-        _eventService.DeleteParticipantsByEmails(accountEmails);
+        _eventService.DeleteParticipantsByEmails(eventId, accountEmails);
     }
     
     [Authorize("IsOrganizer")]
@@ -118,15 +118,15 @@ public class EventController : ControllerBase
     
     [Authorize("IsOrganizer")]
     [HttpDelete($"{{eventId}}/members/{{accountId}}")]
-    public void DeleteMember(Guid accountId)
+    public void DeleteMember(Guid eventId, Guid accountId)
     {
-        _eventService.DeleteParticipantByAccountId(accountId);
+        _eventService.DeleteParticipantByAccountId(eventId, accountId);
     }
     
     [HttpGet("{eventId}/feedbacks")]
     public IEnumerable<FeedbackDto> GetFeedbacks(Guid eventId)
     {
-        IEnumerable<FeedbackDto> response = _eventService.GetFeedbacksByEventId(eventId);
+        var response = _eventService.GetFeedbacksByEventId(eventId).Result;
         return response;
     }
     
@@ -143,7 +143,7 @@ public class EventController : ControllerBase
     [HttpPatch($"{{eventId}}/feedback/{{feedbackId}}")]
     public ActionResult<FeedbackDto> PartiallyUpdateFeedback(Guid feedbackId, UpdateFeedbackDto updateFeedbackDto)
     {
-        FeedbackDto response = _eventService.PartiallyUpdateFeedback(feedbackId, updateFeedbackDto);
+        var response = _eventService.PartiallyUpdateFeedback(feedbackId, updateFeedbackDto).Result;
         return response;
     }
 }

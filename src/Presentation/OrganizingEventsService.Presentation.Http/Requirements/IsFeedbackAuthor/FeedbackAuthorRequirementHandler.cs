@@ -24,7 +24,7 @@ public class FeedbackAuthorRequirementHandler : AuthorizationHandler<FeedbackAut
         }
 
         Guid feedbackId = (Guid)httpContext.GetRouteValue("id")!;
-        FeedbackDto feedback = _eventService.GetFeedbackInfo(feedbackId);
+        FeedbackDto feedback = _eventService.GetFeedbackInfo(feedbackId).Result;
         if (feedback.Author?.AccountId != currentAccount.Account.Id)
         {
             throw new ForbiddenException();

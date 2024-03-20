@@ -43,6 +43,16 @@ public class EventParticipantQuery
         return this;
     }
 
+    public EventParticipantQuery WithAccountId(IEnumerable<Guid> ids)
+    {
+        foreach (var id in ids)
+        {
+            WithAccountId(id);
+        }
+
+        return this;
+    }
+
     public EventParticipantQuery WithRoleId(Guid roleId)
     {
         RoleIds.Add(roleId);
