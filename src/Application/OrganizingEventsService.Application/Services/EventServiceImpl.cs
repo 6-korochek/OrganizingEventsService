@@ -193,6 +193,10 @@ public class EventServiceImpl : EventService
     public override async Task<ParticipantDto> GetParticipantInEvent(Guid eventId, Guid accountId)
     {
         var participantEntity = await _eventRepository.GetParticipantInEvent(accountId, eventId, true, true);
+        if (participantEntity is null)
+        {
+            return null!;
+        }
         var participantDto = new ParticipantDto()
         {
             AccountId = participantEntity.AccountId,

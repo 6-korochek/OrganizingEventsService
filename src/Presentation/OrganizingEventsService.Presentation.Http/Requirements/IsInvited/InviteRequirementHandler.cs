@@ -26,6 +26,7 @@ public class InviteRequirementHandler : AuthorizationHandler<InviteRequirement>
         if (inviteCode is not null)
         {
             context.Succeed(requirement);
+            return;
         }
 
         string? eventId = httpContext.Request.Query["eventId"].FirstOrDefault();
@@ -34,8 +35,9 @@ public class InviteRequirementHandler : AuthorizationHandler<InviteRequirement>
             throw new BadRequestException("Invalid eventId and inviteCode!");
         }
         
-        // Throw Exception if does not exists
-        await _eventService.GetParticipantInEvent(Guid.Parse(eventId), currentAccount.Account.Id);
+        var eventParticipant = await _eventService.GetParticipantInEvent(Guid.Parse(eventId), currentAccount.Account.Id);
+        if (eventParticipant is null)
+            throw new ForbiddenException();
         context.Succeed(requirement);
     }
 }

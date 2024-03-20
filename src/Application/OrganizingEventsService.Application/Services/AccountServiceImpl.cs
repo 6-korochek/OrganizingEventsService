@@ -104,7 +104,7 @@ public class AccountServiceImpl : IAccountService
         var existingAccount = await GetAccountByEmail(createAccountDto.Email);
         if (existingAccount is not null)
         {
-            throw new ConflictException();
+            throw new ConflictException(message: "An account with that e-mail already exists.");
         }
         
         var accountEntity = new Account
