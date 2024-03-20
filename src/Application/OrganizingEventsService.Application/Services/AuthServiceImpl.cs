@@ -94,6 +94,10 @@ public class AuthServiceImpl : AuthService
         // по емаил и сравниваю пароли
 
         var account = await AccountService.GetAccountByEmail(loginAccountDto.Email);
+        if (account is null)
+        {
+            throw new UnauthorizedException();
+        }
         if (!BCrypt.Net.BCrypt.Verify(loginAccountDto.Password, account.PasswordHash))
         {
             throw new UnauthorizedException();
