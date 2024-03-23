@@ -1,13 +1,14 @@
 using MediatR;
 using OrganizingEventsService.Application.Abstractions.Persistence.Repositories;
 using OrganizingEventsService.Application.ApplicationConstants;
+using OrganizingEventsService.Application.Events.Commands;
 using OrganizingEventsService.Application.Models.Dto.Event;
 using OrganizingEventsService.Application.Models.Entities;
 using OrganizingEventsService.Application.Models.Entities.Enums;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace OrganizingEventsService.Application.CQRS.Commands.CreateEvent;
+namespace OrganizingEventsService.Application.Events.Handlers;
 
 public class CreateEventHandler : IRequestHandler<CreateEventCommand, NewEventDto>
 {
@@ -41,17 +42,17 @@ public class CreateEventHandler : IRequestHandler<CreateEventCommand, NewEventDt
             InviteStatus = EventParticipantInviteStatus.Accepted,
             RoleId = Roles.ORGANIZER
         };
-        
+
         eventEntity.EventParticipants.Add(organizer);
         await _eventRepository.Add(eventEntity);
-        
+
         return new NewEventDto
         {
             Id = eventEntity.Id,
             InviteCode = eventEntity.InviteCode
         };
     }
-    
+
     private string GenerateInviteCode(ushort lenght = 10)
     {
         StringBuilder stringBuilder = new StringBuilder();

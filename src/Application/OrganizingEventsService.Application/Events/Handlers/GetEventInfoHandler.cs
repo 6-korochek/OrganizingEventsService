@@ -2,12 +2,13 @@ using MediatR;
 using OrganizingEventsService.Application.Abstractions.Persistence.Queries;
 using OrganizingEventsService.Application.Abstractions.Persistence.Repositories;
 using OrganizingEventsService.Application.ApplicationConstants;
+using OrganizingEventsService.Application.Events.Queries;
 using OrganizingEventsService.Application.Models.Dto.Event;
 using OrganizingEventsService.Application.Models.Entities;
 
-namespace OrganizingEventsService.Application.CQRS.Queries.GetEventInfo;
+namespace OrganizingEventsService.Application.Events.Handlers;
 
-public class GetEventInfoHandler : IRequestHandler<GetEventInfoQuery, EventDto>
+public class GetEventInfoHandler : IRequestHandler<GetEventInfoEventQuery, EventDto>
 {
     private readonly IEventRepository _eventRepository;
 
@@ -16,7 +17,7 @@ public class GetEventInfoHandler : IRequestHandler<GetEventInfoQuery, EventDto>
         _eventRepository = eventRepository;
     }
 
-    public async Task<EventDto> Handle(GetEventInfoQuery request, CancellationToken cancellationToken)
+    public async Task<EventDto> Handle(GetEventInfoEventQuery request, CancellationToken cancellationToken)
     {
         Event eventEntity = null!;
         if (request.InviteCode != null)

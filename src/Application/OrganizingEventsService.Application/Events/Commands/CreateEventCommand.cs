@@ -1,7 +1,7 @@
 using MediatR;
 using OrganizingEventsService.Application.Models.Dto.Event;
 
-namespace OrganizingEventsService.Application.CQRS.Commands.CreateEvent;
+namespace OrganizingEventsService.Application.Events.Commands;
 
 public class CreateEventCommand : IRequest<NewEventDto>
 {

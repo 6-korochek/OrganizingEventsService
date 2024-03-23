@@ -39,7 +39,7 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
     }
 
     public async Task<EventParticipant> GetParticipantInEvent(
-        Guid accountId,
+        Guid accountId, 
         Guid eventId,
         bool includeRole = false,
         bool includeAccount = false)
@@ -60,7 +60,7 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
 
         if (model is null)
         {
-            return null!; // Потом кастомные добавим 
+            throw new Exception(); // Потом кастомные добавим 
         }
 
         return EventParticipantMapper.ToEntity(model);
@@ -91,10 +91,9 @@ public class EventRepository : BaseRepository<Event, EventModel>, IEventReposito
         await DbContext.EventParticipants.Where(model => model.Id == eventParticipant.Id).ExecuteDeleteAsync();
     }
 
-    public async Task DeleteParticipant(IEnumerable<EventParticipant> eventParticipants)
+    public Task DeleteParticipant(IEnumerable<EventParticipant> eventParticipant)
     {
-        var ids = eventParticipants.Select(x => x.Id);
-        await DbContext.EventParticipants.Where(model => ids.Contains(model.Id)).ExecuteDeleteAsync();
+        throw new NotImplementedException();
     }
 
     protected override Event MapToEntity(EventModel model)
