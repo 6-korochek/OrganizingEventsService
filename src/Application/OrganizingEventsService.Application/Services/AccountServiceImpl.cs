@@ -27,7 +27,8 @@ public class AccountServiceImpl : IAccountService
             Surname = accountEntity.Surname,
             IsInvite = accountEntity.IsInvite,
             PasswordHash = accountEntity.PasswordHash,
-            PasswordHashUpdatedAt = accountEntity.PasswordHashUpdatedAt
+            PasswordHashUpdatedAt = accountEntity.PasswordHashUpdatedAt,
+            IsAdmin = accountEntity.IsAdmin
         };
     }
 
