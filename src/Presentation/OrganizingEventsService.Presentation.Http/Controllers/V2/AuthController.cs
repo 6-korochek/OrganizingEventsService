@@ -1,32 +1,33 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OrganizingEventsService.Application.Contracts.Services;
+using OrganizingEventsService.Application.Auth.Commands;
 using OrganizingEventsService.Application.Models.Dto.Account;
 
-namespace OrganizingEventsService.Presentation.Http.Controllers.V1;
+namespace OrganizingEventsService.Presentation.Http.Controllers.V2;
 
 [Route("[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly AuthService _authService;
+    private readonly IMediator _mediator;
 
-    public AuthController(AuthService authService)
+    public AuthController(IMediator mediator)
     {
-        _authService = authService;
+        _mediator = mediator;
     }
     
     [HttpPost("/register")]
     public async Task<AuthenticatedAccountDto> Register([FromBody] RegisterAccountDto registerAccountDto)
     {
-        AuthenticatedAccountDto response = await _authService.Register(registerAccountDto);
+        AuthenticatedAccountDto response = await _mediator.Send(new RegisterCommand { Name = registerAccountDto.Name, Surname = registerAccountDto.Surname, Email = registerAccountDto.Email, Password = registerAccountDto.Password});
         return response;
     }
     
     [HttpPost("/login")]
     public async Task<AuthenticatedAccountDto> Login([FromBody] LoginAccountDto loginAccountDto)
     {
-        AuthenticatedAccountDto response = await _authService.Login(loginAccountDto);
+        AuthenticatedAccountDto response = await _mediator.Send(new LoginCommand {Email = loginAccountDto.Email, Password = loginAccountDto.Password});
         return response;
     }
     
