@@ -14,11 +14,11 @@ public class AdminRequirementHandler : AuthorizationHandler<AdminRequirement>
             throw new ForbiddenException();
         }
 
-        if (currentAccount.Account.IsAdmin)
+        if (!currentAccount.Account.IsAdmin)
         {
-            context.Succeed(requirement);
+            throw new ForbiddenException();
         }
-
-        throw new ForbiddenException();
+        context.Succeed(requirement);
+        return Task.CompletedTask;
     }
 }
