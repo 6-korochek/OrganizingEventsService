@@ -13,7 +13,9 @@ public static class MvcBuilderExtensions
 {
     public static IMvcBuilder AddPresentationHttp(this IMvcBuilder builder)
     {
-        builder.Services.AddTransient<ExceptionHandlerMiddleware>();
+        builder.Services.AddSingleton<RequestLoggerMiddleware>();
+        builder.Services.AddSingleton<ExceptionHandlerMiddleware>();
+        
         builder.Services.AddAuthorization(options =>
         {
             AuthenticationRequirement isAuthenticatedRequirement = new AuthenticationRequirement();

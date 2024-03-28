@@ -14,6 +14,7 @@ namespace OrganizingEventsService.Presentation.Http.Controllers.V2;
 
 [Authorize("IsAuthenticated")]
 [Route("/api/v2/[controller]")]
+[ApiController]
 public class EventController : ControllerBase
 {
     private readonly IMediator _mediator;
