@@ -26,9 +26,9 @@ public class CreateEventHandler : IRequestHandler<CreateEventCommand, NewEventDt
             Name = request.EventRequest.Name,
             Description = request.EventRequest.Description,
             MeetingLink = request.EventRequest.MeetingLink,
-            StartDatetime = request.EventRequest.StartDate,
             Status = request.EventRequest.EventStatus,
-            EndDatetime = request.EventRequest.EndDate,
+            StartDatetime = DateTimeOffset.Parse(request.EventRequest.StartDate.ToString(), null).DateTime,
+            EndDatetime = DateTimeOffset.Parse(request.EventRequest.EndDate.ToString(), null).DateTime,
             MaxParticipant = request.EventRequest.MaxParticipant,
             InviteCode = GenerateInviteCode()
         };

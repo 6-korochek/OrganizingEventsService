@@ -6,7 +6,6 @@ using OrganizingEventsService.Application.Extensions;
 using OrganizingEventsService.Infrastructure.Persistence.Extensions;
 using OrganizingEventsService.Presentation.Http.Extensions;
 using OrganizingEventsService.Presentation.Http.Middlewares;
-using System.Reflection;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

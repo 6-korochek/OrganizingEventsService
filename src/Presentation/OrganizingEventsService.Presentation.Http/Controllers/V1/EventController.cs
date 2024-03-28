@@ -12,6 +12,7 @@ namespace OrganizingEventsService.Presentation.Http.Controllers.V1;
 
 [Authorize("IsAuthenticated")]
 [Route("/api/v1/[controller]")]
+[ApiController]
 public class EventController : ControllerBase
 {
     private readonly EventService _eventService;
