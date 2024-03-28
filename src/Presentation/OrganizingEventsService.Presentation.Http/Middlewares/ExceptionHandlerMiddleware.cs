@@ -4,6 +4,13 @@ namespace OrganizingEventsService.Presentation.Http.Middlewares;
 
 public class ExceptionHandlerMiddleware : IMiddleware
 {
+    private readonly ILogger<ExceptionHandlerMiddleware> _logger;
+
+    public ExceptionHandlerMiddleware(ILogger<ExceptionHandlerMiddleware> logger)
+    {
+        _logger = logger;
+    }
+
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         try
@@ -16,10 +23,10 @@ public class ExceptionHandlerMiddleware : IMiddleware
         }
     }
     
-    private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
+    private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
     {
         httpContext.Response.ContentType = "application/json";
-        httpContext.Response.StatusCode = exception switch
+        var statusCode = exception switch
         {
             BadRequestException => StatusCodes.Status400BadRequest,
             UnauthorizedException => StatusCodes.Status401Unauthorized,
@@ -29,7 +36,20 @@ public class ExceptionHandlerMiddleware : IMiddleware
             _ => StatusCodes.Status500InternalServerError
         };
 
-        var response = new { error = exception.Message };
-        await httpContext.Response.WriteAsync(response.error);
+        if (statusCode is StatusCodes.Status500InternalServerError)
+        {
+            await HandleInternalException(httpContext, exception);
+            return;
+        }
+
+        httpContext.Response.StatusCode = statusCode;
+        await httpContext.Response.WriteAsync(exception.Message);
+    }
+
+    private async Task HandleInternalException(HttpContext httpContext, Exception exception)
+    {
+        _logger.LogError(exception.Message);
+        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await httpContext.Response.WriteAsync("Internal Server Error!");
     }
 }

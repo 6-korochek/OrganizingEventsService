@@ -6,6 +6,8 @@ using OrganizingEventsService.Application.Extensions;
 using OrganizingEventsService.Infrastructure.Persistence.Extensions;
 using OrganizingEventsService.Presentation.Http.Extensions;
 using OrganizingEventsService.Presentation.Http.Middlewares;
+using Serilog;
+using Serilog.Events;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +25,19 @@ builder.Services
 
 WebApplication app = builder.Build();
 
+// Add logger
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.File("Logs/info_log.log", rollingInterval: RollingInterval.Day)
+    .WriteTo.File("Logs/error_log.log",
+        rollingInterval: RollingInterval.Day,
+        restrictedToMinimumLevel: LogEventLevel.Error)
+    .CreateLogger();
+
+app.UseMiddleware<RequestLoggerMiddleware>();
 app.UseMiddleware<ExceptionHandlerMiddleware>();
+
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseRouting();
